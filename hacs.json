@@ -1,4 +1,6 @@
 {
-  "name": "Fullscreen Card",
+  "name": "Browser Control Card",
+  "content_in_root": true,
+  "filename": "browser-control-card.js",
   "render_readme": "true"
 }
