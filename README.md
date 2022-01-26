@@ -6,7 +6,7 @@
 Based on [KTibow/fullscreen-card](https://github.com/KTibow/fullscreen-card) for card design and full screen  
 Wake lock part from https://web.dev/wake-lock/
 
-![Screenshot](/browser-control-card.png)
+![Screenshot](/resources/browser-control-card.png)
 
 Control your browser from a Home Assistant lovelace card: full screen, disable screen lock, zoom...  
 This card is intended for devices like:
@@ -14,9 +14,12 @@ This card is intended for devices like:
 * devices with "locked" browser (browser in kiosk mode, without user menu/commands...)
 
 ## Browser controls available
-* Enter / exit full-screen: [![check_browser_support](https://img.shields.io/badge/check-brower%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_element_requestfullscreen)
-* Enable / disable screen lock (Wake Lock): [![check_browser_support](https://img.shields.io/badge/check-brower%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/wake-lock)
-* Zoom in / zoom out (using CSS): [![check_browser_support](https://img.shields.io/badge/check-brower%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/css-zoom)
+| Icon                                                                         | Control                                  | Availability                                                                                                                                                                                             |
+|------------------------------------------------------------------------------|------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ![Screenshot](/resources/fullscreen.png)                                     | Enter / exit full-screen                 | [![check_browser_support](https://img.shields.io/badge/check-brower%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_element_requestfullscreen) |
+| ![Screenshot](/resources/wake_mode.png)                                      | Enable / disable screen lock (Wake Lock) | [![check_browser_support](https://img.shields.io/badge/check-brower%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/wake-lock)                         |
+| ![Screenshot](/resources/zoom_in.png) ![Screenshot](/resources/zoom_out.png) | Zoom in / zoom out (using CSS)           | [![check_browser_support](https://img.shields.io/badge/check-brower%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/css-zoom)                          |
+| ![Screenshot](/resources/reload.png)                                         | Reload page                              | [![check_browser_support](https://img.shields.io/badge/check-brower%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_location_reload)           |
 
 Note: some features may be disabled if your browser does not support them  
 
