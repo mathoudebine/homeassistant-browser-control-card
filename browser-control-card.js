@@ -7,7 +7,7 @@ if ("wakeLock" in navigator && "request" in navigator.wakeLock) {
   wake_lock_supported = true;
 } else {
   wake_lock_supported = false;
-  console.error("Wake Lock API not supported.");
+  console.warn("Browser Control Card: Wake Lock API not supported.");
 }
 
 const requestWakeLock = async () => {
@@ -56,7 +56,13 @@ const buttons_css_style =
 
 class BrowserControlCard extends HTMLElement {
   set hass(hass) {
-    if (!this.content && this.config) {
+    this._hass = hass;
+  }
+
+  setConfig(config) {
+    this.config = config;
+
+    if (this.config) {
       this.content = document.createElement("ha-card");
       this.content.style.padding = "15px";
 
@@ -160,6 +166,9 @@ class BrowserControlCard extends HTMLElement {
         this.content.appendChild(this.refreshbtn);
       }
 
+      while (this.firstChild) {
+        this.removeChild(this.firstChild);
+      }
       this.appendChild(this.content);
       the_card = this;
     }
@@ -174,15 +183,123 @@ class BrowserControlCard extends HTMLElement {
     };
   }
 
-  setConfig(config) {
-    this.config = config;
-  }
   getCardSize() {
     return 2;
+  }
+
+  static getConfigElement() {
+    return document.createElement("browser-control-card-editor");
   }
 }
 
 customElements.define("browser-control-card", BrowserControlCard);
+
+import { html, css, LitElement } from "https://unpkg.com/lit?module";
+
+class BrowserControlCardEditor extends LitElement {
+  static get properties() {
+    return { hass: {}, _config: {} };
+  }
+
+  setConfig(config) {
+    this._config = config;
+  }
+
+  fireEvent() {
+    const event = new Event("config-changed", {
+      bubbles: true,
+      composed: true,
+    });
+    event.detail = { config: this._config };
+    this.dispatchEvent(event);
+  }
+
+  fullscreenChange(ev) {
+    this._config.show_fullscreen = ev.target.checked;
+    this.fireEvent();
+  }
+  screenLockChange(ev) {
+    this._config.show_screenlock = ev.target.checked;
+    this.fireEvent();
+  }
+  zoomChange(ev) {
+    this._config.show_zoom = ev.target.checked;
+    this.fireEvent();
+  }
+  refreshChange(ev) {
+    this._config.show_refresh = ev.target.checked;
+    this.fireEvent();
+  }
+
+  render() {
+    if (!this.hass || !this._config) {
+      return html``;
+    }
+
+    return html`
+      Note: some buttons may be hidden if your current browser does not support
+      the feature
+      <ul class="switches">
+        <li class="switch">
+          <ha-switch
+            .checked=${this._config.show_fullscreen}
+            @change="${this.fullscreenChange}"
+          >
+          </ha-switch
+          ><span><ha-icon icon="mdi:fullscreen"></ha-icon></span>
+        </li>
+        <li class="switch">
+          <ha-switch
+            .checked=${this._config.show_screenlock}
+            @change="${this.screenLockChange}"
+          >
+          </ha-switch
+          ><span><ha-icon icon="mdi:sleep"></ha-icon></span>
+        </li>
+        <li class="switch">
+          <ha-switch
+            .checked=${this._config.show_zoom}
+            @change="${this.zoomChange}"
+          >
+          </ha-switch
+          ><span
+            ><ha-icon icon="mdi:magnify-plus"></ha-icon> /
+            <ha-icon icon="mdi:magnify-minus"></ha-icon
+          ></span>
+        </li>
+        <li class="switch">
+          <ha-switch
+            .checked=${this._config.show_refresh}
+            @change="${this.refreshChange}"
+          >
+          </ha-switch
+          ><span><ha-icon icon="mdi:refresh"></ha-icon></span>
+        </li>
+      </ul>
+    `;
+  }
+
+  static get styles() {
+    return css`
+      .switches {
+        margin: 8px 0;
+        list-style: none;
+        padding: 0;
+      }
+      .switch {
+        display: flex;
+        align-items: center;
+        height: 40px;
+      }
+      .switches span {
+        padding: 0 16px;
+      }
+    `;
+  }
+}
+
+customElements.define("browser-control-card-editor", BrowserControlCardEditor);
+
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "browser-control-card",
