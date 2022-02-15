@@ -63,26 +63,28 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                             Full-screen button
             ********************************************************/
-      this.fullscreen = false;
-      this.fullscreenbtn = document.createElement("a");
-      this.fullscreenbtn.innerHTML = fullscreen_icon;
-      this.fullscreenbtn.style.cssText = buttons_css_style;
-      this.fullscreenbtn.onclick = function () {
-        if (this.fullscreen) {
-          document.exitFullscreen();
-          this.fullscreenbtn.innerHTML = fullscreen_icon;
-        } else {
-          document.documentElement.requestFullscreen();
-          this.fullscreenbtn.innerHTML = fullscreen_exit_icon;
-        }
-        this.fullscreen = !this.fullscreen;
-      }.bind(this);
-      this.content.appendChild(this.fullscreenbtn);
+      if (this.config.show_fullscreen) {
+        this.fullscreen = false;
+        this.fullscreenbtn = document.createElement("a");
+        this.fullscreenbtn.innerHTML = fullscreen_icon;
+        this.fullscreenbtn.style.cssText = buttons_css_style;
+        this.fullscreenbtn.onclick = function () {
+          if (this.fullscreen) {
+            document.exitFullscreen();
+            this.fullscreenbtn.innerHTML = fullscreen_icon;
+          } else {
+            document.documentElement.requestFullscreen();
+            this.fullscreenbtn.innerHTML = fullscreen_exit_icon;
+          }
+          this.fullscreen = !this.fullscreen;
+        }.bind(this);
+        this.content.appendChild(this.fullscreenbtn);
+      }
 
       /********************************************************
                        Sleep lock button (if supported)
             ********************************************************/
-      if (wake_lock_supported) {
+      if (this.config.show_screenlock && wake_lock_supported) {
         this.wake_lock = false;
         this.nowakebtn = document.createElement("a");
         this.nowakebtn.innerHTML = wake_lock_icon;
@@ -119,45 +121,59 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                                Zoom buttons
             ********************************************************/
-      this.zoom_level = 1.0;
+      if (this.config.show_zoom) {
+        this.zoom_level = 1.0;
 
-      this.zoominbtn = document.createElement("a");
-      this.zoominbtn.innerHTML = zoom_in_icon;
-      this.zoominbtn.style.cssText = buttons_css_style;
-      this.zoominbtn.onclick = function () {
-        this.zoom_level = this.zoom_level + 0.1;
-        document.body.style.zoom = this.zoom_level;
-      }.bind(this);
-      this.content.appendChild(this.zoominbtn);
-
-      this.zoomoutbtn = document.createElement("a");
-      this.zoomoutbtn.innerHTML = zoom_out_icon;
-      this.zoomoutbtn.style.cssText = buttons_css_style;
-      this.zoomoutbtn.onclick = function () {
-        this.zoom_level = this.zoom_level - 0.1;
-        if (this.zoom_level < 0.0) {
-          this.zoom_level = 0.0;
-        } else {
+        this.zoominbtn = document.createElement("a");
+        this.zoominbtn.innerHTML = zoom_in_icon;
+        this.zoominbtn.style.cssText = buttons_css_style;
+        this.zoominbtn.onclick = function () {
+          this.zoom_level = this.zoom_level + 0.1;
           document.body.style.zoom = this.zoom_level;
-        }
-      }.bind(this);
-      this.content.appendChild(this.zoomoutbtn);
+        }.bind(this);
+        this.content.appendChild(this.zoominbtn);
+
+        this.zoomoutbtn = document.createElement("a");
+        this.zoomoutbtn.innerHTML = zoom_out_icon;
+        this.zoomoutbtn.style.cssText = buttons_css_style;
+        this.zoomoutbtn.onclick = function () {
+          this.zoom_level = this.zoom_level - 0.1;
+          if (this.zoom_level < 0.0) {
+            this.zoom_level = 0.0;
+          } else {
+            document.body.style.zoom = this.zoom_level;
+          }
+        }.bind(this);
+        this.content.appendChild(this.zoomoutbtn);
+      }
 
       /********************************************************
                               Refresh button
             ********************************************************/
-      this.refreshbtn = document.createElement("a");
-      this.refreshbtn.innerHTML = refresh_icon;
-      this.refreshbtn.style.cssText = buttons_css_style;
-      this.refreshbtn.onclick = function () {
-        document.location.reload();
-      }.bind(this);
-      this.content.appendChild(this.refreshbtn);
+      if (this.config.show_refresh) {
+        this.refreshbtn = document.createElement("a");
+        this.refreshbtn.innerHTML = refresh_icon;
+        this.refreshbtn.style.cssText = buttons_css_style;
+        this.refreshbtn.onclick = function () {
+          document.location.reload();
+        }.bind(this);
+        this.content.appendChild(this.refreshbtn);
+      }
 
       this.appendChild(this.content);
       the_card = this;
     }
   }
+
+  static getStubConfig() {
+    return {
+      show_fullscreen: true,
+      show_screenlock: true,
+      show_zoom: true,
+      show_refresh: true,
+    };
+  }
+
   setConfig(config) {
     this.config = config;
   }
@@ -172,8 +188,11 @@ window.customCards.push({
   type: "browser-control-card",
   name: "Browser Control Card",
   preview: true,
-  description: "Card to control browser settings: fullscreen, wake lock",
+  description:
+    "Card to control browser settings: full-screen, wake lock, zoom...",
 });
+
+// Replace F11 event by a click on full-screen button (to update icon state)
 document.body.onkeydown = (event) => {
   if (event.key == "F11") {
     event.preventDefault();
