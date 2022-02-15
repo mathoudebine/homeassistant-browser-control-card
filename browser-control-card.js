@@ -7,7 +7,7 @@ if ("wakeLock" in navigator && "request" in navigator.wakeLock) {
   wake_lock_supported = true;
 } else {
   wake_lock_supported = false;
-  console.error("Wake Lock API not supported.");
+  console.warn("Browser Control Card: Wake Lock API not supported.");
 }
 
 const requestWakeLock = async () => {
@@ -56,33 +56,41 @@ const buttons_css_style =
 
 class BrowserControlCard extends HTMLElement {
   set hass(hass) {
-    if (!this.content && this.config) {
+    this._hass = hass;
+  }
+
+  setConfig(config) {
+    this.config = config;
+
+    if (this.config) {
       this.content = document.createElement("ha-card");
       this.content.style.padding = "15px";
 
       /********************************************************
                             Full-screen button
             ********************************************************/
-      this.fullscreen = false;
-      this.fullscreenbtn = document.createElement("a");
-      this.fullscreenbtn.innerHTML = fullscreen_icon;
-      this.fullscreenbtn.style.cssText = buttons_css_style;
-      this.fullscreenbtn.onclick = function () {
-        if (this.fullscreen) {
-          document.exitFullscreen();
-          this.fullscreenbtn.innerHTML = fullscreen_icon;
-        } else {
-          document.documentElement.requestFullscreen();
-          this.fullscreenbtn.innerHTML = fullscreen_exit_icon;
-        }
-        this.fullscreen = !this.fullscreen;
-      }.bind(this);
-      this.content.appendChild(this.fullscreenbtn);
+      if (this.config.show_fullscreen) {
+        this.fullscreen = false;
+        this.fullscreenbtn = document.createElement("a");
+        this.fullscreenbtn.innerHTML = fullscreen_icon;
+        this.fullscreenbtn.style.cssText = buttons_css_style;
+        this.fullscreenbtn.onclick = function () {
+          if (this.fullscreen) {
+            document.exitFullscreen();
+            this.fullscreenbtn.innerHTML = fullscreen_icon;
+          } else {
+            document.documentElement.requestFullscreen();
+            this.fullscreenbtn.innerHTML = fullscreen_exit_icon;
+          }
+          this.fullscreen = !this.fullscreen;
+        }.bind(this);
+        this.content.appendChild(this.fullscreenbtn);
+      }
 
       /********************************************************
                        Sleep lock button (if supported)
             ********************************************************/
-      if (wake_lock_supported) {
+      if (this.config.show_screenlock && wake_lock_supported) {
         this.wake_lock = false;
         this.nowakebtn = document.createElement("a");
         this.nowakebtn.innerHTML = wake_lock_icon;
@@ -119,61 +127,189 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                                Zoom buttons
             ********************************************************/
-      this.zoom_level = 1.0;
+      if (this.config.show_zoom) {
+        this.zoom_level = 1.0;
 
-      this.zoominbtn = document.createElement("a");
-      this.zoominbtn.innerHTML = zoom_in_icon;
-      this.zoominbtn.style.cssText = buttons_css_style;
-      this.zoominbtn.onclick = function () {
-        this.zoom_level = this.zoom_level + 0.1;
-        document.body.style.zoom = this.zoom_level;
-      }.bind(this);
-      this.content.appendChild(this.zoominbtn);
-
-      this.zoomoutbtn = document.createElement("a");
-      this.zoomoutbtn.innerHTML = zoom_out_icon;
-      this.zoomoutbtn.style.cssText = buttons_css_style;
-      this.zoomoutbtn.onclick = function () {
-        this.zoom_level = this.zoom_level - 0.1;
-        if (this.zoom_level < 0.0) {
-          this.zoom_level = 0.0;
-        } else {
+        this.zoominbtn = document.createElement("a");
+        this.zoominbtn.innerHTML = zoom_in_icon;
+        this.zoominbtn.style.cssText = buttons_css_style;
+        this.zoominbtn.onclick = function () {
+          this.zoom_level = this.zoom_level + 0.1;
           document.body.style.zoom = this.zoom_level;
-        }
-      }.bind(this);
-      this.content.appendChild(this.zoomoutbtn);
+        }.bind(this);
+        this.content.appendChild(this.zoominbtn);
+
+        this.zoomoutbtn = document.createElement("a");
+        this.zoomoutbtn.innerHTML = zoom_out_icon;
+        this.zoomoutbtn.style.cssText = buttons_css_style;
+        this.zoomoutbtn.onclick = function () {
+          this.zoom_level = this.zoom_level - 0.1;
+          if (this.zoom_level < 0.0) {
+            this.zoom_level = 0.0;
+          } else {
+            document.body.style.zoom = this.zoom_level;
+          }
+        }.bind(this);
+        this.content.appendChild(this.zoomoutbtn);
+      }
 
       /********************************************************
                               Refresh button
             ********************************************************/
-      this.refreshbtn = document.createElement("a");
-      this.refreshbtn.innerHTML = refresh_icon;
-      this.refreshbtn.style.cssText = buttons_css_style;
-      this.refreshbtn.onclick = function () {
-        document.location.reload();
-      }.bind(this);
-      this.content.appendChild(this.refreshbtn);
+      if (this.config.show_refresh) {
+        this.refreshbtn = document.createElement("a");
+        this.refreshbtn.innerHTML = refresh_icon;
+        this.refreshbtn.style.cssText = buttons_css_style;
+        this.refreshbtn.onclick = function () {
+          document.location.reload();
+        }.bind(this);
+        this.content.appendChild(this.refreshbtn);
+      }
 
+      while (this.firstChild) {
+        this.removeChild(this.firstChild);
+      }
       this.appendChild(this.content);
       the_card = this;
     }
   }
-  setConfig(config) {
-    this.config = config;
+
+  static getStubConfig() {
+    return {
+      show_fullscreen: true,
+      show_screenlock: true,
+      show_zoom: true,
+      show_refresh: true,
+    };
   }
+
   getCardSize() {
     return 2;
+  }
+
+  static getConfigElement() {
+    return document.createElement("browser-control-card-editor");
   }
 }
 
 customElements.define("browser-control-card", BrowserControlCard);
+
+import { html, css, LitElement } from "https://unpkg.com/lit?module";
+
+class BrowserControlCardEditor extends LitElement {
+  static get properties() {
+    return { hass: {}, _config: {} };
+  }
+
+  setConfig(config) {
+    this._config = config;
+  }
+
+  fireEvent() {
+    const event = new Event("config-changed", {
+      bubbles: true,
+      composed: true,
+    });
+    event.detail = { config: this._config };
+    this.dispatchEvent(event);
+  }
+
+  fullscreenChange(ev) {
+    this._config.show_fullscreen = ev.target.checked;
+    this.fireEvent();
+  }
+  screenLockChange(ev) {
+    this._config.show_screenlock = ev.target.checked;
+    this.fireEvent();
+  }
+  zoomChange(ev) {
+    this._config.show_zoom = ev.target.checked;
+    this.fireEvent();
+  }
+  refreshChange(ev) {
+    this._config.show_refresh = ev.target.checked;
+    this.fireEvent();
+  }
+
+  render() {
+    if (!this.hass || !this._config) {
+      return html``;
+    }
+
+    return html`
+      Note: some buttons may be hidden if your current browser does not support
+      the feature
+      <ul class="switches">
+        <li class="switch">
+          <ha-switch
+            .checked=${this._config.show_fullscreen}
+            @change="${this.fullscreenChange}"
+          >
+          </ha-switch
+          ><span><ha-icon icon="mdi:fullscreen"></ha-icon></span>
+        </li>
+        <li class="switch">
+          <ha-switch
+            .checked=${this._config.show_screenlock}
+            @change="${this.screenLockChange}"
+          >
+          </ha-switch
+          ><span><ha-icon icon="mdi:sleep"></ha-icon></span>
+        </li>
+        <li class="switch">
+          <ha-switch
+            .checked=${this._config.show_zoom}
+            @change="${this.zoomChange}"
+          >
+          </ha-switch
+          ><span
+            ><ha-icon icon="mdi:magnify-plus"></ha-icon> /
+            <ha-icon icon="mdi:magnify-minus"></ha-icon
+          ></span>
+        </li>
+        <li class="switch">
+          <ha-switch
+            .checked=${this._config.show_refresh}
+            @change="${this.refreshChange}"
+          >
+          </ha-switch
+          ><span><ha-icon icon="mdi:refresh"></ha-icon></span>
+        </li>
+      </ul>
+    `;
+  }
+
+  static get styles() {
+    return css`
+      .switches {
+        margin: 8px 0;
+        list-style: none;
+        padding: 0;
+      }
+      .switch {
+        display: flex;
+        align-items: center;
+        height: 40px;
+      }
+      .switches span {
+        padding: 0 16px;
+      }
+    `;
+  }
+}
+
+customElements.define("browser-control-card-editor", BrowserControlCardEditor);
+
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "browser-control-card",
   name: "Browser Control Card",
   preview: true,
-  description: "Card to control browser settings: fullscreen, wake lock",
+  description:
+    "Card to control browser settings: full-screen, wake lock, zoom...",
 });
+
+// Replace F11 event by a click on full-screen button (to update icon state)
 document.body.onkeydown = (event) => {
   if (event.key == "F11") {
     event.preventDefault();
