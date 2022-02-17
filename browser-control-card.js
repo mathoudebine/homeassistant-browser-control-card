@@ -69,7 +69,7 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                             Full-screen button
             ********************************************************/
-      if (this.config.show_fullscreen) {
+      if (!this.config.hide_fullscreen) {
         this.fullscreen = false;
         this.fullscreenbtn = document.createElement("a");
         this.fullscreenbtn.innerHTML = fullscreen_icon;
@@ -90,7 +90,7 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                        Sleep lock button (if supported)
             ********************************************************/
-      if (this.config.show_screenlock && wake_lock_supported) {
+      if (!this.config.hide_screenlock && wake_lock_supported) {
         this.wake_lock = false;
         this.nowakebtn = document.createElement("a");
         this.nowakebtn.innerHTML = wake_lock_icon;
@@ -127,7 +127,7 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                                Zoom buttons
             ********************************************************/
-      if (this.config.show_zoom) {
+      if (!this.config.hide_zoom) {
         this.zoom_level = 1.0;
 
         this.zoominbtn = document.createElement("a");
@@ -156,7 +156,7 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                               Refresh button
             ********************************************************/
-      if (this.config.show_refresh) {
+      if (!this.config.hide_refresh) {
         this.refreshbtn = document.createElement("a");
         this.refreshbtn.innerHTML = refresh_icon;
         this.refreshbtn.style.cssText = buttons_css_style;
@@ -176,10 +176,10 @@ class BrowserControlCard extends HTMLElement {
 
   static getStubConfig() {
     return {
-      show_fullscreen: true,
-      show_screenlock: true,
-      show_zoom: true,
-      show_refresh: true,
+      hide_fullscreen: false,
+      hide_screenlock: false,
+      hide_zoom: false,
+      hide_refresh: false,
     };
   }
 
@@ -215,19 +215,19 @@ class BrowserControlCardEditor extends LitElement {
   }
 
   fullscreenChange(ev) {
-    this._config.show_fullscreen = ev.target.checked;
+    this._config.hide_fullscreen = !ev.target.checked;
     this.fireEvent();
   }
   screenLockChange(ev) {
-    this._config.show_screenlock = ev.target.checked;
+    this._config.hide_screenlock = !ev.target.checked;
     this.fireEvent();
   }
   zoomChange(ev) {
-    this._config.show_zoom = ev.target.checked;
+    this._config.hide_zoom = !ev.target.checked;
     this.fireEvent();
   }
   refreshChange(ev) {
-    this._config.show_refresh = ev.target.checked;
+    this._config.hide_refresh = !ev.target.checked;
     this.fireEvent();
   }
 
@@ -242,7 +242,7 @@ class BrowserControlCardEditor extends LitElement {
       <ul class="switches">
         <li class="switch">
           <ha-switch
-            .checked=${this._config.show_fullscreen}
+            .checked=${!this._config.hide_fullscreen}
             @change="${this.fullscreenChange}"
           >
           </ha-switch
@@ -250,7 +250,7 @@ class BrowserControlCardEditor extends LitElement {
         </li>
         <li class="switch">
           <ha-switch
-            .checked=${this._config.show_screenlock}
+            .checked=${!this._config.hide_screenlock}
             @change="${this.screenLockChange}"
           >
           </ha-switch
@@ -258,7 +258,7 @@ class BrowserControlCardEditor extends LitElement {
         </li>
         <li class="switch">
           <ha-switch
-            .checked=${this._config.show_zoom}
+            .checked=${!this._config.hide_zoom}
             @change="${this.zoomChange}"
           >
           </ha-switch
@@ -269,7 +269,7 @@ class BrowserControlCardEditor extends LitElement {
         </li>
         <li class="switch">
           <ha-switch
-            .checked=${this._config.show_refresh}
+            .checked=${!this._config.hide_refresh}
             @change="${this.refreshChange}"
           >
           </ha-switch
