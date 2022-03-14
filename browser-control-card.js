@@ -29,8 +29,6 @@ const handleVisibilityChange = () => {
   }
 };
 
-var the_card;
-
 // Icons and CSS style for buttons
 const fullscreen_icon = '<ha-icon icon="mdi:fullscreen"></ha-icon>';
 const fullscreen_exit_icon = '<ha-icon icon="mdi:fullscreen-exit"></ha-icon>';
@@ -170,7 +168,6 @@ class BrowserControlCard extends HTMLElement {
         this.removeChild(this.firstChild);
       }
       this.appendChild(this.content);
-      the_card = this;
     }
   }
 
@@ -308,11 +305,3 @@ window.customCards.push({
   description:
     "Card to control browser settings: full-screen, wake lock, zoom...",
 });
-
-// Replace F11 event by a click on full-screen button (to update icon state)
-document.body.onkeydown = (event) => {
-  if (event.key == "F11") {
-    event.preventDefault();
-    the_card.fullscreenbtn.onclick();
-  }
-};
