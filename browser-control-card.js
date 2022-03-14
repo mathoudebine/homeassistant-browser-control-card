@@ -1,15 +1,34 @@
 /* Wake Lock part from https://web.dev/wake-lock/ (sources: https://glitch.com/edit/#!/wake-lock-demo?path=script.js%3A1%3A0 ) */
 /* Fullscreen part & card design from https://github.com/KTibow/fullscreen-card */
 var wake_lock_supported;
-let wakeLock = null;
-
 if ("wakeLock" in navigator && "request" in navigator.wakeLock) {
   wake_lock_supported = true;
 } else {
   wake_lock_supported = false;
-  console.warn("Browser Control Card: Wake Lock API not supported.");
+  console.warn(
+    "Browser Control Card: Wake Lock API not supported by this browser."
+  );
 }
 
+var css_zoom_supported;
+try {
+  if (CSS.supports("zoom", "1")) {
+    css_zoom_supported = true;
+  } else {
+    css_zoom_supported = false;
+    console.warn(
+      "Browser Control Card: CSS Zoom not supported by this browser."
+    );
+  }
+} catch (error) {
+  // When in doubt, display the zoom buttons
+  css_zoom_supported = true;
+  console.warn(
+    "Browser Control Card: CSS Zoom may not be supported by this browser."
+  );
+}
+
+let wakeLock = null;
 const requestWakeLock = async () => {
   try {
     wakeLock = await navigator.wakeLock.request("screen");
@@ -125,7 +144,7 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                                Zoom buttons
             ********************************************************/
-      if (!this.config.hide_zoom) {
+      if (!this.config.hide_zoom && css_zoom_supported) {
         this.zoom_level = 1.0;
 
         this.zoominbtn = document.createElement("a");
