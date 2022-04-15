@@ -57,9 +57,8 @@ const zoom_in_icon = '<ha-icon icon="mdi:magnify-plus"></ha-icon>';
 const zoom_out_icon = '<ha-icon icon="mdi:magnify-minus"></ha-icon>';
 const refresh_icon = '<ha-icon icon="mdi:refresh"></ha-icon>';
 
-const buttons_css_style =
+const small_buttons_css_style =
   "border: 2px solid var(--primary-color);" +
-  "font-size: 2em;" +
   "padding: 0.5em;" +
   "display: inline-block;" +
   "background: var(--primary-color);" +
@@ -71,6 +70,15 @@ const buttons_css_style =
   "margin-bottom: 2px;" +
   "margin-top: 2px;";
 
+const buttons_css_style = small_buttons_css_style + "font-size: 2em;";
+
+function getButtonCssStyle(small_buttons) {
+  if (small_buttons) {
+    return small_buttons_css_style;
+  } else {
+    return buttons_css_style;
+  }
+}
 class BrowserControlCard extends HTMLElement {
   set hass(hass) {
     this._hass = hass;
@@ -81,7 +89,10 @@ class BrowserControlCard extends HTMLElement {
 
     if (this.config) {
       this.content = document.createElement("ha-card");
-      this.content.style.padding = "15px";
+
+      if (!this.config.no_padding) {
+        this.content.style.padding = "15px";
+      }
 
       /********************************************************
                             Full-screen button
@@ -90,7 +101,9 @@ class BrowserControlCard extends HTMLElement {
         this.fullscreen = false;
         this.fullscreenbtn = document.createElement("a");
         this.fullscreenbtn.innerHTML = fullscreen_icon;
-        this.fullscreenbtn.style.cssText = buttons_css_style;
+        this.fullscreenbtn.style.cssText = getButtonCssStyle(
+          this.config.small_buttons
+        );
         this.fullscreenbtn.onclick = function () {
           if (this.fullscreen) {
             document.exitFullscreen();
@@ -111,7 +124,9 @@ class BrowserControlCard extends HTMLElement {
         this.wake_lock = false;
         this.nowakebtn = document.createElement("a");
         this.nowakebtn.innerHTML = wake_lock_icon;
-        this.nowakebtn.style.cssText = buttons_css_style;
+        this.nowakebtn.style.cssText = getButtonCssStyle(
+          this.config.small_buttons
+        );
         this.nowakebtn.onclick = function () {
           if (this.wake_lock) {
             document.removeEventListener(
@@ -149,7 +164,9 @@ class BrowserControlCard extends HTMLElement {
 
         this.zoominbtn = document.createElement("a");
         this.zoominbtn.innerHTML = zoom_in_icon;
-        this.zoominbtn.style.cssText = buttons_css_style;
+        this.zoominbtn.style.cssText = getButtonCssStyle(
+          this.config.small_buttons
+        );
         this.zoominbtn.onclick = function () {
           this.zoom_level = this.zoom_level + 0.1;
           document.body.style.zoom = this.zoom_level;
@@ -158,7 +175,9 @@ class BrowserControlCard extends HTMLElement {
 
         this.zoomoutbtn = document.createElement("a");
         this.zoomoutbtn.innerHTML = zoom_out_icon;
-        this.zoomoutbtn.style.cssText = buttons_css_style;
+        this.zoomoutbtn.style.cssText = getButtonCssStyle(
+          this.config.small_buttons
+        );
         this.zoomoutbtn.onclick = function () {
           this.zoom_level = this.zoom_level - 0.1;
           if (this.zoom_level < 0.0) {
@@ -176,7 +195,9 @@ class BrowserControlCard extends HTMLElement {
       if (!this.config.hide_refresh) {
         this.refreshbtn = document.createElement("a");
         this.refreshbtn.innerHTML = refresh_icon;
-        this.refreshbtn.style.cssText = buttons_css_style;
+        this.refreshbtn.style.cssText = getButtonCssStyle(
+          this.config.small_buttons
+        );
         this.refreshbtn.onclick = function () {
           document.location.reload();
         }.bind(this);
@@ -196,6 +217,8 @@ class BrowserControlCard extends HTMLElement {
       hide_screenlock: false,
       hide_zoom: false,
       hide_refresh: false,
+      no_padding: false,
+      small_buttons: false,
     };
   }
 
@@ -246,6 +269,14 @@ class BrowserControlCardEditor extends LitElement {
     this._config.hide_refresh = !ev.target.checked;
     this.fireEvent();
   }
+  noPaddingChange(ev) {
+    this._config.no_padding = ev.target.checked;
+    this.fireEvent();
+  }
+  smallButtonsChange(ev) {
+    this._config.small_buttons = ev.target.checked;
+    this.fireEvent();
+  }
 
   render() {
     if (!this.hass || !this._config) {
@@ -253,9 +284,10 @@ class BrowserControlCardEditor extends LitElement {
     }
 
     return html`
-      Note: some buttons may be hidden if your current browser does not support
-      the feature
       <ul class="switches">
+        <h2>Buttons</h2>
+        Note: some buttons may be hidden if your current browser does not
+        support the feature
         <li class="switch">
           <ha-switch
             .checked=${!this._config.hide_fullscreen}
@@ -290,6 +322,25 @@ class BrowserControlCardEditor extends LitElement {
           >
           </ha-switch
           ><span><ha-icon icon="mdi:refresh"></ha-icon></span>
+        </li>
+        <h2>Style</h2>
+        <li class="switch">
+          <ha-switch
+            .checked=${this._config.no_padding}
+            @change="${this.noPaddingChange}"
+          >
+          </ha-switch
+          ><span
+            >No white space (padding) between buttons and card borders</span
+          >
+        </li>
+        <li class="switch">
+          <ha-switch
+            .checked=${this._config.small_buttons}
+            @change="${this.smallButtonsChange}"
+          >
+          </ha-switch
+          ><span>Smaller buttons</span>
         </li>
       </ul>
     `;
