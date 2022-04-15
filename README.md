@@ -10,7 +10,7 @@
 Based on [KTibow/fullscreen-card](https://github.com/KTibow/fullscreen-card) for card design and full screen  
 Wake lock part from https://web.dev/wake-lock/
 
-![Screenshot](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/browser-control-card.png)
+![Browser Control card](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/browser-control-card.png)
 
 Control your browser from a Home Assistant lovelace card: full screen, disable screen lock, zoom...  
 This card is intended for:
@@ -18,18 +18,34 @@ This card is intended for:
 * devices with "locked" browser (browser in kiosk mode, without user menu/commands...)
 
 ## Available browser controls
-| Icon                                                                                                                                                                                                                                                           | Control                                  | Config. option                | Availability                                                                                                                                                                                              |
-|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ![Screenshot](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master//resources/fullscreen.png)                                                                                                                              | Enter / exit full-screen                 | `hide_fullscreen: true/false` | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_element_requestfullscreen) |
-| ![Screenshot](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master//resources/wake_mode.png)                                                                                                                               | Enable / disable screen lock (Wake Lock) | `hide_screenlock: true/false` | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/wake-lock)                         |
-| ![Screenshot](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master//resources/zoom_in.png) ![Screenshot](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master//resources/zoom_out.png) | Zoom in / zoom out (using CSS)           | `hide_zoom: true/false`       | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/css-zoom)                          |
-| ![Screenshot](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master//resources/reload.png)                                                                                                                                  | Reload page                              | `hide_refresh: true/false`    | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_location_reload)           |
+| Icon                                                                                                                                                                                                                                                     | Control                                  | Config. option                | Availability                                                                                                                                                                                              |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ![Full-screen](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/fullscreen.png)                                                                                                                        | Enter / exit full-screen                 | `hide_fullscreen: true/false` | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_element_requestfullscreen) |
+| ![Wake lock](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/wake_mode.png)                                                                                                                           | Enable / disable screen lock (Wake Lock) | `hide_screenlock: true/false` | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/wake-lock)                         |
+| ![Zoom In](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/zoom_in.png) ![Zoom out](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master//resources/zoom_out.png) | Zoom in / zoom out (using CSS)           | `hide_zoom: true/false`       | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/css-zoom)                          |
+| ![Reload](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/reload.png)                                                                                                                                 | Reload page                              | `hide_refresh: true/false`    | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_location_reload)           |
 
 Note: some features may be disabled if your browser does not support them  
 
 ### What is my browser?
 If you cannot identify the browser your device is using, browse the following website https://www.whatsmyua.info/  
 Search the result for a string like `Chrome/92.0`
+
+## Card configuration
+The card supports configuration through Home Assistant UI:
+
+![Configuration UI](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/card_configuration_ui.gif)
+
+YAML configuration is also supported:
+```yaml
+type: custom:browser-control-card
+hide_fullscreen: false
+hide_screenlock: false
+hide_zoom: false
+hide_refresh: false
+no_padding: false
+small_buttons: false
+```
 
 ## Install the card
 ### Using HACS (recommended)
@@ -42,4 +58,5 @@ Search the result for a string like `Chrome/92.0`
 1. Copy `browser-control-card.js` from this repository to your HomeAssistant configuration folder `config/www/`  
 2. Go to HomeAssistant configuration page > Dashboards > Resources tab
 3. Add resource `/local/browser-control-card.js` (Resource type: JavaScript module)
-4. Add the card to your dashboard
+4. Reload the web UI by flushing cache (Ctrl + F5)
+5. Add the card to your dashboard
