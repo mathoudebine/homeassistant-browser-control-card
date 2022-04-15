@@ -73,11 +73,11 @@ const small_buttons_css_style =
 const buttons_css_style = small_buttons_css_style + "font-size: 2em;";
 
 function getButtonCssStyle(small_buttons) {
-    if (small_buttons) {
-      return small_buttons_css_style;
-    } else {
-      return buttons_css_style;
-    }
+  if (small_buttons) {
+    return small_buttons_css_style;
+  } else {
+    return buttons_css_style;
+  }
 }
 class BrowserControlCard extends HTMLElement {
   set hass(hass) {
@@ -90,7 +90,7 @@ class BrowserControlCard extends HTMLElement {
     if (this.config) {
       this.content = document.createElement("ha-card");
 
-      if(!this.config.no_padding) {
+      if (!this.config.no_padding) {
         this.content.style.padding = "15px";
       }
 
@@ -101,7 +101,9 @@ class BrowserControlCard extends HTMLElement {
         this.fullscreen = false;
         this.fullscreenbtn = document.createElement("a");
         this.fullscreenbtn.innerHTML = fullscreen_icon;
-        this.fullscreenbtn.style.cssText = getButtonCssStyle(this.config.small_buttons);
+        this.fullscreenbtn.style.cssText = getButtonCssStyle(
+          this.config.small_buttons
+        );
         this.fullscreenbtn.onclick = function () {
           if (this.fullscreen) {
             document.exitFullscreen();
@@ -122,7 +124,9 @@ class BrowserControlCard extends HTMLElement {
         this.wake_lock = false;
         this.nowakebtn = document.createElement("a");
         this.nowakebtn.innerHTML = wake_lock_icon;
-        this.nowakebtn.style.cssText = getButtonCssStyle(this.config.small_buttons);
+        this.nowakebtn.style.cssText = getButtonCssStyle(
+          this.config.small_buttons
+        );
         this.nowakebtn.onclick = function () {
           if (this.wake_lock) {
             document.removeEventListener(
@@ -160,7 +164,9 @@ class BrowserControlCard extends HTMLElement {
 
         this.zoominbtn = document.createElement("a");
         this.zoominbtn.innerHTML = zoom_in_icon;
-        this.zoominbtn.style.cssText = getButtonCssStyle(this.config.small_buttons);
+        this.zoominbtn.style.cssText = getButtonCssStyle(
+          this.config.small_buttons
+        );
         this.zoominbtn.onclick = function () {
           this.zoom_level = this.zoom_level + 0.1;
           document.body.style.zoom = this.zoom_level;
@@ -169,7 +175,9 @@ class BrowserControlCard extends HTMLElement {
 
         this.zoomoutbtn = document.createElement("a");
         this.zoomoutbtn.innerHTML = zoom_out_icon;
-        this.zoomoutbtn.style.cssText = getButtonCssStyle(this.config.small_buttons);
+        this.zoomoutbtn.style.cssText = getButtonCssStyle(
+          this.config.small_buttons
+        );
         this.zoomoutbtn.onclick = function () {
           this.zoom_level = this.zoom_level - 0.1;
           if (this.zoom_level < 0.0) {
@@ -187,7 +195,9 @@ class BrowserControlCard extends HTMLElement {
       if (!this.config.hide_refresh) {
         this.refreshbtn = document.createElement("a");
         this.refreshbtn.innerHTML = refresh_icon;
-        this.refreshbtn.style.cssText = getButtonCssStyle(this.config.small_buttons);
+        this.refreshbtn.style.cssText = getButtonCssStyle(
+          this.config.small_buttons
+        );
         this.refreshbtn.onclick = function () {
           document.location.reload();
         }.bind(this);
@@ -208,7 +218,7 @@ class BrowserControlCard extends HTMLElement {
       hide_zoom: false,
       hide_refresh: false,
       no_padding: false,
-      small_buttons: false
+      small_buttons: false,
     };
   }
 
@@ -276,7 +286,8 @@ class BrowserControlCardEditor extends LitElement {
     return html`
       <ul class="switches">
         <h2>Buttons</h2>
-        Note: some buttons may be hidden if your current browser does not support the feature
+        Note: some buttons may be hidden if your current browser does not
+        support the feature
         <li class="switch">
           <ha-switch
             .checked=${!this._config.hide_fullscreen}
@@ -319,7 +330,9 @@ class BrowserControlCardEditor extends LitElement {
             @change="${this.noPaddingChange}"
           >
           </ha-switch
-          ><span>No white space (padding) between buttons and card borders</span>
+          ><span
+            >No white space (padding) between buttons and card borders</span
+          >
         </li>
         <li class="switch">
           <ha-switch
