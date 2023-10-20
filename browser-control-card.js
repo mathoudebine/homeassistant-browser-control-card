@@ -233,7 +233,7 @@ class BrowserControlCard extends HTMLElement {
 
 customElements.define("browser-control-card", BrowserControlCard);
 
-import { html, css, LitElement } from "https://unpkg.com/lit?module";
+import { html, css, LitElement } from "https://unpkg.com/lit@2.8.0?module";
 
 class BrowserControlCardEditor extends LitElement {
   static get properties() {
