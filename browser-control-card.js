@@ -57,12 +57,12 @@ const zoom_in_icon = '<ha-icon icon="mdi:magnify-plus"></ha-icon>';
 const zoom_out_icon = '<ha-icon icon="mdi:magnify-minus"></ha-icon>';
 const refresh_icon = '<ha-icon icon="mdi:refresh"></ha-icon>';
 
-const small_buttons_css_style =
-  "border: 2px solid var(--primary-color);" +
-  "padding: 0.5em;" +
+const button_style =
+  "border: none;" +
+  "padding: 0.5rem;" +
   "display: inline-block;" +
   "background: var(--primary-color);" +
-  "color: var(--primary-background-color);" +
+  "color: var(--text-primary-color);" +
   "text-align: center;" +
   "border-radius: var(--ha-card-border-radius, 4px);" +
   "cursor: pointer;" +
@@ -70,13 +70,13 @@ const small_buttons_css_style =
   "margin-bottom: 2px;" +
   "margin-top: 2px;";
 
-const buttons_css_style = small_buttons_css_style + "font-size: 2em;";
+const big_icon_style = "--mdc-icon-size: var(--paper-font-display1_-_font-size);";
 
-function getButtonCssStyle(small_buttons) {
-  if (small_buttons) {
-    return small_buttons_css_style;
+function getIconStyle(small_icon) {
+  if (small_icon) {
+    return "";
   } else {
-    return buttons_css_style;
+    return big_icon_style;
   }
 }
 class BrowserControlCard extends HTMLElement {
@@ -91,7 +91,7 @@ class BrowserControlCard extends HTMLElement {
       this.content = document.createElement("ha-card");
 
       if (!this.config.no_padding) {
-        this.content.style.padding = "15px";
+        this.content.style.padding = "1rem";
       }
 
       /********************************************************
@@ -99,18 +99,25 @@ class BrowserControlCard extends HTMLElement {
             ********************************************************/
       if (!this.config.hide_fullscreen) {
         this.fullscreen = false;
-        this.fullscreenbtn = document.createElement("a");
+        this.fullscreenbtn = document.createElement("button");
         this.fullscreenbtn.innerHTML = fullscreen_icon;
-        this.fullscreenbtn.style.cssText = getButtonCssStyle(
+        this.fullscreenbtn.style.cssText = button_style;
+        this.fullscreenbtn.getElementsByTagName('ha-icon')[0].style.cssText = getIconStyle(
           this.config.small_buttons
         );
         this.fullscreenbtn.onclick = function () {
           if (this.fullscreen) {
             document.exitFullscreen();
             this.fullscreenbtn.innerHTML = fullscreen_icon;
+            this.fullscreenbtn.getElementsByTagName('ha-icon')[0].style.cssText = getIconStyle(
+              this.config.small_buttons
+            );
           } else {
             document.documentElement.requestFullscreen();
             this.fullscreenbtn.innerHTML = fullscreen_exit_icon;
+            this.fullscreenbtn.getElementsByTagName('ha-icon')[0].style.cssText = getIconStyle(
+              this.config.small_buttons
+            );
           }
           this.fullscreen = !this.fullscreen;
         }.bind(this);
@@ -122,9 +129,10 @@ class BrowserControlCard extends HTMLElement {
             ********************************************************/
       if (!this.config.hide_screenlock && wake_lock_supported) {
         this.wake_lock = false;
-        this.nowakebtn = document.createElement("a");
+        this.nowakebtn = document.createElement("button");
         this.nowakebtn.innerHTML = wake_lock_icon;
-        this.nowakebtn.style.cssText = getButtonCssStyle(
+        this.nowakebtn.style.cssText = button_style;
+        this.nowakebtn.getElementsByTagName('ha-icon')[0].style.cssText = getIconStyle(
           this.config.small_buttons
         );
         this.nowakebtn.onclick = function () {
@@ -139,6 +147,9 @@ class BrowserControlCard extends HTMLElement {
             );
             cancelWakeLock();
             this.nowakebtn.innerHTML = wake_lock_icon;
+            this.nowakebtn.getElementsByTagName('ha-icon')[0].style.cssText = getIconStyle(
+              this.config.small_buttons
+            );
           } else {
             requestWakeLock();
             document.addEventListener(
@@ -150,6 +161,9 @@ class BrowserControlCard extends HTMLElement {
               handleVisibilityChange
             );
             this.nowakebtn.innerHTML = wake_unlock_icon;
+            this.nowakebtn.getElementsByTagName('ha-icon')[0].style.cssText = getIconStyle(
+              this.config.small_buttons
+            );
           }
           this.wake_lock = !this.wake_lock;
         }.bind(this);
@@ -162,9 +176,10 @@ class BrowserControlCard extends HTMLElement {
       if (!this.config.hide_zoom && css_zoom_supported) {
         this.zoom_level = 1.0;
 
-        this.zoominbtn = document.createElement("a");
+        this.zoominbtn = document.createElement("button");
         this.zoominbtn.innerHTML = zoom_in_icon;
-        this.zoominbtn.style.cssText = getButtonCssStyle(
+        this.zoominbtn.style.cssText = button_style;
+        this.zoominbtn.getElementsByTagName('ha-icon')[0].style.cssText = getIconStyle(
           this.config.small_buttons
         );
         this.zoominbtn.onclick = function () {
@@ -173,9 +188,10 @@ class BrowserControlCard extends HTMLElement {
         }.bind(this);
         this.content.appendChild(this.zoominbtn);
 
-        this.zoomoutbtn = document.createElement("a");
+        this.zoomoutbtn = document.createElement("button");
         this.zoomoutbtn.innerHTML = zoom_out_icon;
-        this.zoomoutbtn.style.cssText = getButtonCssStyle(
+        this.zoomoutbtn.style.cssText = button_style;
+        this.zoomoutbtn.getElementsByTagName('ha-icon')[0].style.cssText = getIconStyle(
           this.config.small_buttons
         );
         this.zoomoutbtn.onclick = function () {
@@ -193,9 +209,10 @@ class BrowserControlCard extends HTMLElement {
                               Refresh button
             ********************************************************/
       if (!this.config.hide_refresh) {
-        this.refreshbtn = document.createElement("a");
+        this.refreshbtn = document.createElement("button");
         this.refreshbtn.innerHTML = refresh_icon;
-        this.refreshbtn.style.cssText = getButtonCssStyle(
+        this.refreshbtn.style.cssText = button_style;
+        this.refreshbtn.getElementsByTagName('ha-icon')[0].style.cssText = getIconStyle(
           this.config.small_buttons
         );
         this.refreshbtn.onclick = function () {
@@ -233,7 +250,9 @@ class BrowserControlCard extends HTMLElement {
 
 customElements.define("browser-control-card", BrowserControlCard);
 
-import { html, css, LitElement } from "https://unpkg.com/lit@2.8.0?module";
+const LitElement = (window.LitElement || Object.getPrototypeOf(customElements.get("home-assistant-main")))
+const html = LitElement.prototype.html;
+const css = LitElement.prototype.css;
 
 class BrowserControlCardEditor extends LitElement {
   static get properties() {
@@ -241,7 +260,7 @@ class BrowserControlCardEditor extends LitElement {
   }
 
   setConfig(config) {
-    this._config = config;
+    this._config = Object.assign({}, config);
   }
 
   fireEvent() {
