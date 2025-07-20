@@ -48,20 +48,21 @@ const handleVisibilityChange = () => {
   }
 };
 
+const ha = document.querySelector("body > home-assistant");
+const ha_main = ha.shadowRoot.querySelector("home-assistant-main");
+const ha_panel_lovelace = ha_main.shadowRoot.querySelector("ha-panel-lovelace");
+
 function hideNavbar(hideNavbar) {
   try {
-    const elHass = document.querySelector("body > home-assistant");
-    const elHaMain = elHass.shadowRoot.querySelector("home-assistant-main");
-    const panelLovelace =
-      elHaMain.shadowRoot.querySelector("ha-panel-lovelace");
-    if (!panelLovelace) {
+    if (!ha_panel_lovelace) {
       return;
     }
-    let huiRoot = panelLovelace.shadowRoot.querySelector("hui-root");
+    let huiRoot = ha_panel_lovelace.shadowRoot.querySelector("hui-root");
     if (!huiRoot) {
       return;
     }
     huiRoot = huiRoot.shadowRoot;
+    const view = huiRoot.querySelector("#view");
     let appToolbar = huiRoot.querySelector("app-toolbar");
     if (!appToolbar) {
       // Changed with 2023.04
@@ -69,25 +70,73 @@ function hideNavbar(hideNavbar) {
     }
     if (hideNavbar) {
       appToolbar.style.setProperty("display", "none");
+      view.style.minHeight = "100vh";
+      view.style.marginTop = "0";
+      view.style.paddingTop = "0";
     } else {
       appToolbar.style.removeProperty("display");
+      view.style.removeProperty("min-height");
+      view.style.removeProperty("margin-top");
+      view.style.removeProperty("padding-top");
     }
     window.dispatchEvent(new Event("resize"));
   } catch (e) {
-    console.error(e);
+    console.warn(e);
+  }
+}
+
+function hideSidebar(hideSidebar) {
+  try {
+    if (ha_panel_lovelace) {
+      const ha_menu_button = ha_panel_lovelace.shadowRoot
+        .querySelector("hui-root")
+        .shadowRoot.querySelector("ha-menu-button");
+      if (ha_menu_button) {
+        if (hideSidebar) {
+          ha_menu_button.style.display = "none";
+        } else {
+          ha_menu_button.style.removeProperty("display");
+        }
+      }
+    }
+  } catch (e) {
+    console.warn(e);
+  }
+
+  try {
+    const sidebar = ha_main.shadowRoot
+      .querySelector("ha-drawer")
+      .shadowRoot.querySelector("aside");
+    if (sidebar) {
+      if (hideSidebar) {
+        sidebar.style.maxWidth = "0px";
+        ha_main.style.setProperty(
+          "--mdc-drawer-width",
+          "env(safe-area-inset-left)",
+        );
+      } else {
+        sidebar.style.maxWidth = "";
+        ha_main.style.removeProperty("--mdc-drawer-width");
+      }
+      window.dispatchEvent(new Event("resize"));
+    }
+  } catch (e) {
+    console.warn(e);
   }
 }
 
 // Icons and CSS style for buttons
 const fullscreen_icon = '<ha-icon icon="mdi:fullscreen"></ha-icon>';
 const fullscreen_exit_icon = '<ha-icon icon="mdi:fullscreen-exit"></ha-icon>';
-const wake_lock_icon = '<ha-icon icon="mdi:sleep"></ha-icon>';
-const wake_unlock_icon = '<ha-icon icon="mdi:sleep-off"></ha-icon>';
+const wake_lock_icon = '<ha-icon icon="mdi:sleep-off"></ha-icon>';
+const wake_unlock_icon = '<ha-icon icon="mdi:sleep"></ha-icon>';
 const zoom_in_icon = '<ha-icon icon="mdi:magnify-plus"></ha-icon>';
 const zoom_out_icon = '<ha-icon icon="mdi:magnify-minus"></ha-icon>';
 const refresh_icon = '<ha-icon icon="mdi:refresh"></ha-icon>';
-const hide_navbar_icon = '<ha-icon icon="mdi:table-row"></ha-icon>';
-const show_navbar_icon = '<ha-icon icon="mdi:table-row-remove"></ha-icon>';
+const hide_navbar_icon = '<ha-icon icon="mdi:table-row-remove"></ha-icon>';
+const show_navbar_icon = '<ha-icon icon="mdi:table-row"></ha-icon>';
+const hide_sidebar_icon = '<ha-icon icon="mdi:playlist-remove"></ha-icon>';
+const show_sidebar_icon = '<ha-icon icon="mdi:menu"></ha-icon>';
 
 const button_style =
   "border: none;" +
@@ -134,6 +183,7 @@ class BrowserControlCard extends HTMLElement {
         this.fullscreenbtn = document.createElement("button");
         this.fullscreenbtn.innerHTML = fullscreen_icon;
         this.fullscreenbtn.style.cssText = button_style;
+        this.fullscreenbtn.title = "Enter fullscreen";
         this.fullscreenbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
         this.fullscreenbtn.onclick = function () {
@@ -143,12 +193,14 @@ class BrowserControlCard extends HTMLElement {
             this.fullscreenbtn.getElementsByTagName(
               "ha-icon",
             )[0].style.cssText = getIconStyle(this.config.small_buttons);
+            this.fullscreenbtn.title = "Enter fullscreen";
           } else {
             document.documentElement.requestFullscreen();
             this.fullscreenbtn.innerHTML = fullscreen_exit_icon;
             this.fullscreenbtn.getElementsByTagName(
               "ha-icon",
             )[0].style.cssText = getIconStyle(this.config.small_buttons);
+            this.fullscreenbtn.title = "Exit fullscreen";
           }
           this.fullscreen = !this.fullscreen;
         }.bind(this);
@@ -163,6 +215,7 @@ class BrowserControlCard extends HTMLElement {
         this.nowakebtn = document.createElement("button");
         this.nowakebtn.innerHTML = wake_lock_icon;
         this.nowakebtn.style.cssText = button_style;
+        this.nowakebtn.title = "Keep screen awake";
         this.nowakebtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
         this.nowakebtn.onclick = function () {
@@ -179,6 +232,7 @@ class BrowserControlCard extends HTMLElement {
             this.nowakebtn.innerHTML = wake_lock_icon;
             this.nowakebtn.getElementsByTagName("ha-icon")[0].style.cssText =
               getIconStyle(this.config.small_buttons);
+            this.nowakebtn.title = "Keep screen awake";
           } else {
             requestWakeLock();
             document.addEventListener(
@@ -192,6 +246,7 @@ class BrowserControlCard extends HTMLElement {
             this.nowakebtn.innerHTML = wake_unlock_icon;
             this.nowakebtn.getElementsByTagName("ha-icon")[0].style.cssText =
               getIconStyle(this.config.small_buttons);
+            this.nowakebtn.title = "Stop keeping screen awake";
           }
           this.wake_lock = !this.wake_lock;
         }.bind(this);
@@ -207,6 +262,7 @@ class BrowserControlCard extends HTMLElement {
         this.zoominbtn = document.createElement("button");
         this.zoominbtn.innerHTML = zoom_in_icon;
         this.zoominbtn.style.cssText = button_style;
+        this.zoominbtn.title = "Zoom in";
         this.zoominbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
         this.zoominbtn.onclick = function () {
@@ -218,6 +274,7 @@ class BrowserControlCard extends HTMLElement {
         this.zoomoutbtn = document.createElement("button");
         this.zoomoutbtn.innerHTML = zoom_out_icon;
         this.zoomoutbtn.style.cssText = button_style;
+        this.zoomoutbtn.title = "Zoom out";
         this.zoomoutbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
         this.zoomoutbtn.onclick = function () {
@@ -238,6 +295,7 @@ class BrowserControlCard extends HTMLElement {
         this.refreshbtn = document.createElement("button");
         this.refreshbtn.innerHTML = refresh_icon;
         this.refreshbtn.style.cssText = button_style;
+        this.refreshbtn.title = "Refresh page";
         this.refreshbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
         this.refreshbtn.onclick = function () {
@@ -254,6 +312,7 @@ class BrowserControlCard extends HTMLElement {
         this.navbarbtn = document.createElement("button");
         this.navbarbtn.innerHTML = hide_navbar_icon;
         this.navbarbtn.style.cssText = button_style;
+        this.navbarbtn.title = "Hide navigation bar";
         this.navbarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
         this.navbarbtn.onclick = function () {
@@ -262,15 +321,47 @@ class BrowserControlCard extends HTMLElement {
             this.navbarbtn.innerHTML = hide_navbar_icon;
             this.navbarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
               getIconStyle(this.config.small_buttons);
+            this.navbarbtn.title = "Hide navigation bar";
           } else {
             hideNavbar(true);
             this.navbarbtn.innerHTML = show_navbar_icon;
             this.navbarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
               getIconStyle(this.config.small_buttons);
+            this.navbarbtn.title = "Show navigation bar";
           }
           this.hidden_navbar = !this.hidden_navbar;
         }.bind(this);
         this.content.appendChild(this.navbarbtn);
+      }
+
+      /********************************************************
+                            Hide Sidebar
+      ********************************************************/
+      if (!this.config.hide_sidebar) {
+        this.hidden_sidebar = false;
+        this.sidebarbtn = document.createElement("button");
+        this.sidebarbtn.innerHTML = hide_sidebar_icon;
+        this.sidebarbtn.style.cssText = button_style;
+        this.sidebarbtn.title = "Hide sidebar";
+        this.sidebarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
+          getIconStyle(this.config.small_buttons);
+        this.sidebarbtn.onclick = function () {
+          if (this.hidden_sidebar) {
+            hideSidebar(false);
+            this.sidebarbtn.innerHTML = hide_sidebar_icon;
+            this.sidebarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
+              getIconStyle(this.config.small_buttons);
+            this.sidebarbtn.title = "Hide sidebar";
+          } else {
+            hideSidebar(true);
+            this.sidebarbtn.innerHTML = show_sidebar_icon;
+            this.sidebarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
+              getIconStyle(this.config.small_buttons);
+            this.sidebarbtn.title = "Show sidebar";
+          }
+          this.hidden_sidebar = !this.hidden_sidebar;
+        }.bind(this);
+        this.content.appendChild(this.sidebarbtn);
       }
 
       while (this.firstChild) {
@@ -287,6 +378,7 @@ class BrowserControlCard extends HTMLElement {
       hide_zoom: false,
       hide_refresh: false,
       hide_navbar: false,
+      hide_sidebar: false,
       no_padding: false,
       small_buttons: false,
     };
@@ -345,6 +437,10 @@ class BrowserControlCardEditor extends LitElement {
   }
   navbarChange(ev) {
     this._config.hide_navbar = !ev.target.checked;
+    this.fireEvent();
+  }
+  sidebarChange(ev) {
+    this._config.hide_sidebar = !ev.target.checked;
     this.fireEvent();
   }
   noPaddingChange(ev) {
@@ -416,6 +512,14 @@ class BrowserControlCardEditor extends LitElement {
             ><ha-icon icon="mdi:table-row"></ha-icon> Show/hide navigation
             bar</span
           >
+        </li>
+        <li class="switch">
+          <ha-switch
+            .checked=${!this._config.hide_sidebar}
+            @change="${this.sidebarChange}"
+          >
+          </ha-switch
+          ><span><ha-icon icon="mdi:menu"></ha-icon> Show/hide sidebar</span>
         </li>
         <h2>Style</h2>
         <li class="switch">
