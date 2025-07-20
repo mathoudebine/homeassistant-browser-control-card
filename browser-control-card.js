@@ -70,7 +70,7 @@ const button_style =
   "margin-bottom: 2px;" +
   "margin-top: 2px;";
 
-const big_icon_style = "--mdc-icon-size: var(--paper-font-display1_-_font-size);";
+const big_icon_style = "--mdc-icon-size: var(--ha-font-size-5xl);";
 
 function getIconStyle(small_icon) {
   if (small_icon) {
