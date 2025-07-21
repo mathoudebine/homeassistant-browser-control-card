@@ -1,9 +1,7 @@
-name: "Validation And Formatting"
+name: "HACS Validation"
 on:
   push:
   pull_request:
-  schedule:
-    - cron: '0 0 * * *'
 jobs:
   ci:
     runs-on: ubuntu-latest
