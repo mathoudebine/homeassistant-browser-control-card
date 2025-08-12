@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - run: npm install uglify-js
     - run: npx uglify-js browser-control-card.js --compress --output browser-control-card.js
     - name: Upload release asset
