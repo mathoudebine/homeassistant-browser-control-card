@@ -23,15 +23,16 @@ Changes are not persisted: just reload the page to revert to initial settings
 ## Available browser controls
 | Icon                                                                                                                                                                                                                                                     | Control                                                   | Config. option                | Availability                                                                                                                                                                                                    |
 |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ![Full-screen](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/fullscreen.png)                                                                                                                        | Enter / exit full-screen                                  | `hide_fullscreen: true/false` | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_element_requestfullscreen)       |
-| ![Wake lock](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/wake_mode.png)                                                                                                                           | Enable / disable screen wake lock (keep screen always on) | `hide_screenlock: true/false` | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/wake-lock)                               |
-| ![Zoom In](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/zoom_in.png) ![Zoom out](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master//resources/zoom_out.png) | Zoom in / zoom out (using CSS)                            | `hide_zoom: true/false`       | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/css-zoom)                                |
-| ![Reload](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/reload.png)                                                                                                                                 | Reload page                                               | `hide_refresh: true/false`    | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_location_reload)                 |
-| ![Hide navigation bar](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/hide_navbar.png)                                                                                                               | Hide navigation bar                                       | `hide_navbar: true/false`     | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_cssstyledeclaration_setproperty) |
-| ![Hide sidebar](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/hide_sidebar.png)                                                                                                                     | Hide sidebar                                              | `hide_sidebar: true/false`    | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_cssstyledeclaration_setproperty) |
+| ![Full-screen](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/fullscreen.png)                                                                                                                        | Enter / exit full-screen                                  | `controls: [fullscreen]` | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_element_requestfullscreen)       |
+| ![Wake lock](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/wake_mode.png)                                                                                                                           | Enable / disable screen wake lock (keep screen always on) | `controls: [wakelock]` | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/wake-lock)                               |
+| ![Zoom In](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/zoom_in.png) ![Zoom out](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master//resources/zoom_out.png) | Zoom in / zoom out (using CSS)                            | `controls: [zoom]`       | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/css-zoom)                                |
+| ![Reload](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/reload.png)                                                                                                                                 | Reload page                                               | `controls: [reload]`    | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_location_reload)                 |
+| ![Hide navigation bar](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/hide_navbar.png)                                                                                                               | Hide navigation bar                                       | `controls: [navbar]`     | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_cssstyledeclaration_setproperty) |
+| ![Hide sidebar](https://raw.githubusercontent.com/mathoudebine/homeassistant-browser-control-card/master/resources/hide_sidebar.png)                                                                                                                     | Hide sidebar                                              | `controls: [sidebar]`    | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_cssstyledeclaration_setproperty) |
 
 
-Note: some features may be disabled if your browser does not support them  
+> [!NOTE]
+> Some features may be disabled if your browser does not support them  
 
 ### What is my browser?
 If you cannot identify the browser your device is using, browse the following website https://www.whatsmyua.info/  
@@ -45,15 +46,19 @@ The card supports configuration through Home Assistant UI:
 YAML configuration is also supported:
 ```yaml
 type: custom:browser-control-card
-hide_fullscreen: false
-hide_screenlock: false
-hide_zoom: false
-hide_refresh: false
-hide_navbar: false
-hide_sidebar: false
+controls:
+  - fullscreen
+  - wakelock
+  - zoom
+  - reload
+  - navbar
+  - sidebar
 no_padding: false
 small_buttons: false
 ```
+
+> [!NOTE]
+> Old configuration keys beginning with `hide_` are still supported but will be ignored as soon as you configure the card using graphical editor.
 
 ## Install the card
 ### Using HACS (recommended)
