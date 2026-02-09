@@ -180,6 +180,13 @@ class BrowserControlCard extends HTMLElement {
         this.content.style.padding = "1rem";
       }
 
+      this.content.style.display = "flex";
+      this.content.style.alignItems = "center";
+      if (!this.config.layout) {
+        this.config.layout = "center"
+      }
+      this.content.style.justifyContent = this.config.layout;
+
       // Convert old configuration keys
       if (!this.config.controls) {
         this.config.controls = [];
@@ -411,6 +418,7 @@ class BrowserControlCard extends HTMLElement {
       ],
       no_padding: false,
       small_buttons: false,
+      layout: "center",
     };
   }
 
@@ -454,6 +462,12 @@ class BrowserControlCard extends HTMLElement {
           schema: [
             { name: "no_padding", selector: { boolean: {} } },
             { name: "small_buttons", selector: { boolean: {} } },
+            {
+              name: "layout",
+              selector: {
+                select: { options: ["center", "space-around", "left", "right"], multiple: false, mode: "dropdown"},
+              },
+            },
           ],
         },
       ],
@@ -461,15 +475,19 @@ class BrowserControlCard extends HTMLElement {
         switch (schema.name) {
           case "controls":
             return "Available controls";
+          case "layout":
+            return "Horizontal layout"
         }
         return undefined;
       },
       computeHelper: (schema) => {
         switch (schema.name) {
           case "no_padding":
-            return "No white space (padding) between buttons and card borders";
+            return "Remove white space (padding) between buttons and card borders";
           case "controls":
             return "Select the controls to display. Some controls may be hidden if your current browser does not support the feature.";
+          case "layout":
+            return "Configure controls layout inside the card"
         }
         return undefined;
       },
