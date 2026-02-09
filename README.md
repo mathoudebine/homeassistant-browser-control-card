@@ -15,7 +15,7 @@ Wake lock part from https://web.dev/wake-lock/
 Control your browser from a Home Assistant lovelace card: full screen, disable screen lock, zoom...  
 This card is intended for:
 * mobile devices
-* devices with "locked" browser (browser in kiosk mode, without user menu/commands...)
+* devices with "locked" browser (browser in kiosk mode, without user menu/commands...) like the Facebook/Meta Portal
 
 Also available: show/hide HomeAssistant navigation bar & sidebar  
 Changes are not persisted: just reload the page to revert to initial settings
