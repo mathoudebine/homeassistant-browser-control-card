@@ -68,6 +68,10 @@ function hideNavbar(hideNavbar) {
       // Changed with 2023.04
       appToolbar = huiRoot.querySelector("div.toolbar");
     }
+    if (!appToolbar) {
+      // Changed with 2026.02
+      appToolbar = huiRoot.querySelector("div.header");
+    }
     if (hideNavbar) {
       appToolbar.style.setProperty("display", "none");
       view.style.minHeight = "100vh";
