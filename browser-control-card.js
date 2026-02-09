@@ -6,7 +6,7 @@ if ("wakeLock" in navigator && "request" in navigator.wakeLock) {
 } else {
   wake_lock_supported = false;
   console.warn(
-    "Browser Control Card: Wake Lock API not supported by this browser.",
+    "Browser Control Card: Wake Lock API not supported by this browser."
   );
 }
 
@@ -17,14 +17,14 @@ try {
   } else {
     css_zoom_supported = false;
     console.warn(
-      "Browser Control Card: CSS Zoom not supported by this browser.",
+      "Browser Control Card: CSS Zoom not supported by this browser."
     );
   }
 } catch (error) {
   // When in doubt, display the zoom buttons
   css_zoom_supported = true;
   console.warn(
-    "Browser Control Card: CSS Zoom may not be supported by this browser.",
+    "Browser Control Card: CSS Zoom may not be supported by this browser."
   );
 }
 
@@ -116,7 +116,7 @@ function hideSidebar(hideSidebar) {
         sidebar.style.maxWidth = "0px";
         ha_main.style.setProperty(
           "--mdc-drawer-width",
-          "env(safe-area-inset-left)",
+          "env(safe-area-inset-left)"
         );
       } else {
         sidebar.style.maxWidth = "";
@@ -170,7 +170,8 @@ class BrowserControlCard extends HTMLElement {
   }
 
   setConfig(config) {
-    this.config = config;
+    // Clone the configuration to edit it if necessary (e.g. for old config. keys)
+    this.config = structuredClone(config);
 
     if (this.config) {
       this.content = document.createElement("ha-card");
@@ -179,10 +180,33 @@ class BrowserControlCard extends HTMLElement {
         this.content.style.padding = "1rem";
       }
 
+      // Convert old configuration keys
+      if (!this.config.controls) {
+        this.config.controls = [];
+        if (!this.config.hide_fullscreen) {
+          this.config.controls.push("fullscreen")
+        }
+        if (!this.config.hide_screenlock) {
+          this.config.controls.push("wakelock")
+        }
+        if (!this.config.hide_zoom) {
+          this.config.controls.push("zoom")
+        }
+        if (!this.config.hide_refresh) {
+          this.config.controls.push("reload")
+        }
+        if (!this.config.hide_navbar) {
+          this.config.controls.push("navbar")
+        }
+        if (!this.config.hide_sidebar) {
+          this.config.controls.push("sidebar")
+        }
+      }
+
       /********************************************************
                             Full-screen button
       ********************************************************/
-      if (!this.config.hide_fullscreen) {
+      if (this.config.controls.includes('fullscreen')) {
         this.fullscreen = false;
         this.fullscreenbtn = document.createElement("button");
         this.fullscreenbtn.innerHTML = fullscreen_icon;
@@ -195,14 +219,14 @@ class BrowserControlCard extends HTMLElement {
             document.exitFullscreen();
             this.fullscreenbtn.innerHTML = fullscreen_icon;
             this.fullscreenbtn.getElementsByTagName(
-              "ha-icon",
+              "ha-icon"
             )[0].style.cssText = getIconStyle(this.config.small_buttons);
             this.fullscreenbtn.title = "Enter fullscreen";
           } else {
             document.documentElement.requestFullscreen();
             this.fullscreenbtn.innerHTML = fullscreen_exit_icon;
             this.fullscreenbtn.getElementsByTagName(
-              "ha-icon",
+              "ha-icon"
             )[0].style.cssText = getIconStyle(this.config.small_buttons);
             this.fullscreenbtn.title = "Exit fullscreen";
           }
@@ -214,7 +238,7 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                         Sleep lock button (if supported)
       ********************************************************/
-      if (!this.config.hide_screenlock && wake_lock_supported) {
+      if (this.config.controls.includes('wakelock') && wake_lock_supported) {
         this.wake_lock = false;
         this.nowakebtn = document.createElement("button");
         this.nowakebtn.innerHTML = wake_lock_icon;
@@ -226,11 +250,11 @@ class BrowserControlCard extends HTMLElement {
           if (this.wake_lock) {
             document.removeEventListener(
               "visibilitychange",
-              handleVisibilityChange,
+              handleVisibilityChange
             );
             document.removeEventListener(
               "fullscreenchange",
-              handleVisibilityChange,
+              handleVisibilityChange
             );
             cancelWakeLock();
             this.nowakebtn.innerHTML = wake_lock_icon;
@@ -241,11 +265,11 @@ class BrowserControlCard extends HTMLElement {
             requestWakeLock();
             document.addEventListener(
               "visibilitychange",
-              handleVisibilityChange,
+              handleVisibilityChange
             );
             document.addEventListener(
               "fullscreenchange",
-              handleVisibilityChange,
+              handleVisibilityChange
             );
             this.nowakebtn.innerHTML = wake_unlock_icon;
             this.nowakebtn.getElementsByTagName("ha-icon")[0].style.cssText =
@@ -260,7 +284,7 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                                 Zoom buttons
       ********************************************************/
-      if (!this.config.hide_zoom && css_zoom_supported) {
+      if (this.config.controls.includes('zoom') && css_zoom_supported) {
         this.zoom_level = 1.0;
 
         this.zoominbtn = document.createElement("button");
@@ -295,7 +319,7 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                               Refresh button
       ********************************************************/
-      if (!this.config.hide_refresh) {
+      if (this.config.controls.includes('reload')) {
         this.refreshbtn = document.createElement("button");
         this.refreshbtn.innerHTML = refresh_icon;
         this.refreshbtn.style.cssText = button_style;
@@ -311,7 +335,7 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                             Hide Navigation Bar
       ********************************************************/
-      if (!this.config.hide_navbar) {
+      if (this.config.controls.includes('navbar')) {
         this.hidden_navbar = false;
         this.navbarbtn = document.createElement("button");
         this.navbarbtn.innerHTML = hide_navbar_icon;
@@ -341,7 +365,7 @@ class BrowserControlCard extends HTMLElement {
       /********************************************************
                             Hide Sidebar
       ********************************************************/
-      if (!this.config.hide_sidebar) {
+      if (this.config.controls.includes('sidebar')) {
         this.hidden_sidebar = false;
         this.sidebarbtn = document.createElement("button");
         this.sidebarbtn.innerHTML = hide_sidebar_icon;
@@ -377,12 +401,14 @@ class BrowserControlCard extends HTMLElement {
 
   static getStubConfig() {
     return {
-      hide_fullscreen: false,
-      hide_screenlock: false,
-      hide_zoom: false,
-      hide_refresh: false,
-      hide_navbar: false,
-      hide_sidebar: false,
+      controls: [
+        "fullscreen",
+        "wakelock",
+        "zoom",
+        "reload",
+        "navbar",
+        "sidebar",
+      ],
       no_padding: false,
       small_buttons: false,
     };
@@ -392,182 +418,66 @@ class BrowserControlCard extends HTMLElement {
     return 2;
   }
 
-  static getConfigElement() {
-    return document.createElement("browser-control-card-editor");
+  static getConfigForm() {
+    return {
+      schema: [
+        {
+          type: "expandable",
+          name: "",
+          title: "Features",
+          flatten: true,
+          schema: [
+            {
+              name: "controls",
+              required: true,
+              selector: {
+                select: {
+                  options: [
+                    { label: "Full screen", value: "fullscreen" },
+                    { label: "Keep screen awake", value: "wakelock" },
+                    { label: "Zoom in/out", value: "zoom" },
+                    { label: "Reload page", value: "reload" },
+                    { label: "Toggle navigation bar", value: "navbar" },
+                    { label: "Toggle sidebar", value: "sidebar" },
+                  ],
+                  multiple: true,
+                },
+              },
+            },
+          ],
+        },
+        {
+          type: "expandable",
+          name: "",
+          title: "Style",
+          flatten: true,
+          schema: [
+            { name: "no_padding", selector: { boolean: {} } },
+            { name: "small_buttons", selector: { boolean: {} } },
+          ],
+        },
+      ],
+      computeLabel: (schema) => {
+        switch (schema.name) {
+          case "controls":
+            return "Available controls";
+        }
+        return undefined;
+      },
+      computeHelper: (schema) => {
+        switch (schema.name) {
+          case "no_padding":
+            return "No white space (padding) between buttons and card borders";
+          case "controls":
+            return "Select the controls to display. Some controls may be hidden if your current browser does not support the feature.";
+        }
+        return undefined;
+      },
+    };
   }
 }
 
 customElements.define("browser-control-card", BrowserControlCard);
-
-const LitElement =
-  window.LitElement ||
-  Object.getPrototypeOf(customElements.get("home-assistant-main"));
-const html = LitElement.prototype.html;
-const css = LitElement.prototype.css;
-
-class BrowserControlCardEditor extends LitElement {
-  static get properties() {
-    return { hass: {}, _config: {} };
-  }
-
-  setConfig(config) {
-    this._config = Object.assign({}, config);
-  }
-
-  fireEvent() {
-    const event = new Event("config-changed", {
-      bubbles: true,
-      composed: true,
-    });
-    event.detail = { config: this._config };
-    this.dispatchEvent(event);
-  }
-
-  fullscreenChange(ev) {
-    this._config.hide_fullscreen = !ev.target.checked;
-    this.fireEvent();
-  }
-  screenLockChange(ev) {
-    this._config.hide_screenlock = !ev.target.checked;
-    this.fireEvent();
-  }
-  zoomChange(ev) {
-    this._config.hide_zoom = !ev.target.checked;
-    this.fireEvent();
-  }
-  refreshChange(ev) {
-    this._config.hide_refresh = !ev.target.checked;
-    this.fireEvent();
-  }
-  navbarChange(ev) {
-    this._config.hide_navbar = !ev.target.checked;
-    this.fireEvent();
-  }
-  sidebarChange(ev) {
-    this._config.hide_sidebar = !ev.target.checked;
-    this.fireEvent();
-  }
-  noPaddingChange(ev) {
-    this._config.no_padding = ev.target.checked;
-    this.fireEvent();
-  }
-  smallButtonsChange(ev) {
-    this._config.small_buttons = ev.target.checked;
-    this.fireEvent();
-  }
-
-  render() {
-    if (!this.hass || !this._config) {
-      return html``;
-    }
-
-    return html`
-      <ul class="switches">
-        <h2>Buttons</h2>
-        Note: some buttons may be hidden if your current browser does not
-        support the feature
-        <li class="switch">
-          <ha-switch
-            .checked=${!this._config.hide_fullscreen}
-            @change="${this.fullscreenChange}"
-          >
-          </ha-switch
-          ><span
-            ><ha-icon icon="mdi:fullscreen"></ha-icon> Toggle fullscreen</span
-          >
-        </li>
-        <li class="switch">
-          <ha-switch
-            .checked=${!this._config.hide_screenlock}
-            @change="${this.screenLockChange}"
-          >
-          </ha-switch
-          ><span
-            ><ha-icon icon="mdi:sleep"></ha-icon> Toggle screen wake lock (keep
-            screen on)</span
-          >
-        </li>
-        <li class="switch">
-          <ha-switch
-            .checked=${!this._config.hide_zoom}
-            @change="${this.zoomChange}"
-          >
-          </ha-switch
-          ><span
-            ><ha-icon icon="mdi:magnify-plus"></ha-icon> /
-            <ha-icon icon="mdi:magnify-minus"></ha-icon> Change zoom level</span
-          >
-        </li>
-        <li class="switch">
-          <ha-switch
-            .checked=${!this._config.hide_refresh}
-            @change="${this.refreshChange}"
-          >
-          </ha-switch
-          ><span><ha-icon icon="mdi:refresh"></ha-icon> Refresh page</span>
-        </li>
-        <li class="switch">
-          <ha-switch
-            .checked=${!this._config.hide_navbar}
-            @change="${this.navbarChange}"
-          >
-          </ha-switch
-          ><span
-            ><ha-icon icon="mdi:table-row"></ha-icon> Show/hide navigation
-            bar</span
-          >
-        </li>
-        <li class="switch">
-          <ha-switch
-            .checked=${!this._config.hide_sidebar}
-            @change="${this.sidebarChange}"
-          >
-          </ha-switch
-          ><span><ha-icon icon="mdi:menu"></ha-icon> Show/hide sidebar</span>
-        </li>
-        <h2>Style</h2>
-        <li class="switch">
-          <ha-switch
-            .checked=${this._config.no_padding}
-            @change="${this.noPaddingChange}"
-          >
-          </ha-switch
-          ><span
-            >No white space (padding) between buttons and card borders</span
-          >
-        </li>
-        <li class="switch">
-          <ha-switch
-            .checked=${this._config.small_buttons}
-            @change="${this.smallButtonsChange}"
-          >
-          </ha-switch
-          ><span>Smaller buttons</span>
-        </li>
-      </ul>
-    `;
-  }
-
-  static get styles() {
-    return css`
-      .switches {
-        margin: 8px 0;
-        list-style: none;
-        padding: 0;
-      }
-      .switch {
-        display: flex;
-        align-items: center;
-        height: 40px;
-      }
-      .switches span {
-        padding: 0 16px;
-      }
-    `;
-  }
-}
-
-customElements.define("browser-control-card-editor", BrowserControlCardEditor);
 
 window.customCards = window.customCards || [];
 window.customCards.push({
