@@ -42,7 +42,7 @@ const cancelWakeLock = () => {
   wakeLock = null;
 };
 
-const handleVisibilityChange = () => {
+const handleVisibilityChangeOnWakeLock = () => {
   if (wakeLock !== null && document.visibilityState === "visible") {
     requestWakeLock();
   }
@@ -133,14 +133,11 @@ function hideSidebar(hideSidebar) {
 const fullscreen_icon = '<ha-icon icon="mdi:fullscreen"></ha-icon>';
 const fullscreen_exit_icon = '<ha-icon icon="mdi:fullscreen-exit"></ha-icon>';
 const wake_lock_icon = '<ha-icon icon="mdi:sleep-off"></ha-icon>';
-const wake_unlock_icon = '<ha-icon icon="mdi:sleep"></ha-icon>';
 const zoom_in_icon = '<ha-icon icon="mdi:magnify-plus"></ha-icon>';
 const zoom_out_icon = '<ha-icon icon="mdi:magnify-minus"></ha-icon>';
 const refresh_icon = '<ha-icon icon="mdi:refresh"></ha-icon>';
 const hide_navbar_icon = '<ha-icon icon="mdi:table-row-remove"></ha-icon>';
-const show_navbar_icon = '<ha-icon icon="mdi:table-row"></ha-icon>';
 const hide_sidebar_icon = '<ha-icon icon="mdi:playlist-remove"></ha-icon>';
-const show_sidebar_icon = '<ha-icon icon="mdi:menu"></ha-icon>';
 
 const button_style =
   "border: none;" +
@@ -250,6 +247,7 @@ class BrowserControlCard extends HTMLElement {
         this.nowakebtn = document.createElement("button");
         this.nowakebtn.innerHTML = wake_lock_icon;
         this.nowakebtn.style.cssText = button_style;
+        this.nowakebtn.style.background = "var(--disabled-color)";
         this.nowakebtn.title = "Keep screen awake";
         this.nowakebtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
@@ -257,31 +255,27 @@ class BrowserControlCard extends HTMLElement {
           if (this.wake_lock) {
             document.removeEventListener(
               "visibilitychange",
-              handleVisibilityChange
+              handleVisibilityChangeOnWakeLock
             );
             document.removeEventListener(
               "fullscreenchange",
-              handleVisibilityChange
+              handleVisibilityChangeOnWakeLock
             );
             cancelWakeLock();
-            this.nowakebtn.innerHTML = wake_lock_icon;
-            this.nowakebtn.getElementsByTagName("ha-icon")[0].style.cssText =
-              getIconStyle(this.config.small_buttons);
             this.nowakebtn.title = "Keep screen awake";
+            this.nowakebtn.style.background = "var(--disabled-color)";
           } else {
             requestWakeLock();
             document.addEventListener(
               "visibilitychange",
-              handleVisibilityChange
+              handleVisibilityChangeOnWakeLock
             );
             document.addEventListener(
               "fullscreenchange",
-              handleVisibilityChange
+              handleVisibilityChangeOnWakeLock
             );
-            this.nowakebtn.innerHTML = wake_unlock_icon;
-            this.nowakebtn.getElementsByTagName("ha-icon")[0].style.cssText =
-              getIconStyle(this.config.small_buttons);
             this.nowakebtn.title = "Stop keeping screen awake";
+            this.nowakebtn.style.background = "var(--primary-color)";
           }
           this.wake_lock = !this.wake_lock;
         }.bind(this);
@@ -347,22 +341,19 @@ class BrowserControlCard extends HTMLElement {
         this.navbarbtn = document.createElement("button");
         this.navbarbtn.innerHTML = hide_navbar_icon;
         this.navbarbtn.style.cssText = button_style;
+        this.navbarbtn.style.background = "var(--disabled-color)";
         this.navbarbtn.title = "Hide navigation bar";
         this.navbarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
         this.navbarbtn.onclick = function () {
           if (this.hidden_navbar) {
             hideNavbar(false);
-            this.navbarbtn.innerHTML = hide_navbar_icon;
-            this.navbarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
-              getIconStyle(this.config.small_buttons);
             this.navbarbtn.title = "Hide navigation bar";
+            this.navbarbtn.style.background = "var(--disabled-color)";
           } else {
             hideNavbar(true);
-            this.navbarbtn.innerHTML = show_navbar_icon;
-            this.navbarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
-              getIconStyle(this.config.small_buttons);
             this.navbarbtn.title = "Show navigation bar";
+            this.navbarbtn.style.background = "var(--primary-color)";
           }
           this.hidden_navbar = !this.hidden_navbar;
         }.bind(this);
@@ -377,21 +368,18 @@ class BrowserControlCard extends HTMLElement {
         this.sidebarbtn = document.createElement("button");
         this.sidebarbtn.innerHTML = hide_sidebar_icon;
         this.sidebarbtn.style.cssText = button_style;
+        this.sidebarbtn.style.background = "var(--disabled-color)";
         this.sidebarbtn.title = "Hide sidebar";
         this.sidebarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
         this.sidebarbtn.onclick = function () {
           if (this.hidden_sidebar) {
             hideSidebar(false);
-            this.sidebarbtn.innerHTML = hide_sidebar_icon;
-            this.sidebarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
-              getIconStyle(this.config.small_buttons);
+            this.sidebarbtn.style.background = "var(--disabled-color)";
             this.sidebarbtn.title = "Hide sidebar";
           } else {
             hideSidebar(true);
-            this.sidebarbtn.innerHTML = show_sidebar_icon;
-            this.sidebarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
-              getIconStyle(this.config.small_buttons);
+            this.sidebarbtn.style.background = "var(--primary-color)";
             this.sidebarbtn.title = "Show sidebar";
           }
           this.hidden_sidebar = !this.hidden_sidebar;
