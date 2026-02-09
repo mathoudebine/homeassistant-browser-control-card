@@ -1,16 +1,17 @@
 name: "HACS Validation"
+
 on:
   push:
   pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
 jobs:
-  ci:
-    runs-on: ubuntu-latest
+  validate-hacs:
+    runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v6
-        name: Download repo
+      - name: HACS validation
+        uses: "hacs/action@main"
         with:
-          fetch-depth: 0
-      - uses: hacs/action@main
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CATEGORY: plugin
+          CATEGORY: "plugin"
