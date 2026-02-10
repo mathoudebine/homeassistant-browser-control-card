@@ -475,7 +475,7 @@ class BrowserControlCard extends HTMLElement {
           case "controls":
             return "Select the controls to display. Some controls may be hidden if your current browser does not support the feature.";
           case "layout":
-            return "Configure controls layout inside the card"
+            return "Configure controls alignment and spacing inside the card"
         }
         return undefined;
       },
