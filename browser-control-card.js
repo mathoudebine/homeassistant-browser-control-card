@@ -48,20 +48,19 @@ const handleVisibilityChangeOnWakeLock = () => {
   }
 };
 
-const ha = document.querySelector("body > home-assistant");
-const ha_main = ha.shadowRoot.querySelector("home-assistant-main");
-const ha_panel_lovelace = ha_main.shadowRoot.querySelector("ha-panel-lovelace");
 
 function hideNavbar(hideNavbar) {
+  const ha_panel_lovelace = document.querySelector("body > home-assistant")
+    .shadowRoot.querySelector("home-assistant-main")
+    .shadowRoot.querySelector("ha-panel-lovelace");
+
   try {
     if (!ha_panel_lovelace) {
       return;
     }
-    let huiRoot = ha_panel_lovelace.shadowRoot.querySelector("hui-root");
-    if (!huiRoot) {
-      return;
-    }
-    huiRoot = huiRoot.shadowRoot;
+    let huiRoot = ha_panel_lovelace.shadowRoot
+      .querySelector("hui-root")
+      .shadowRoot
     const view = huiRoot.querySelector("#view");
     let appToolbar = huiRoot.querySelector("app-toolbar");
     if (!appToolbar) {
@@ -69,7 +68,7 @@ function hideNavbar(hideNavbar) {
       appToolbar = huiRoot.querySelector("div.toolbar");
     }
     if (!appToolbar) {
-      // Changed with 2026.02
+      // Sometimes .toolbar cannot be found: hide .header instead
       appToolbar = huiRoot.querySelector("div.header");
     }
     if (hideNavbar) {
@@ -90,6 +89,10 @@ function hideNavbar(hideNavbar) {
 }
 
 function hideSidebar(hideSidebar) {
+  const ha = document.querySelector("body > home-assistant");
+  const ha_main = ha.shadowRoot.querySelector("home-assistant-main");
+  const ha_panel_lovelace = ha_main.shadowRoot.querySelector("ha-panel-lovelace");
+
   try {
     if (ha_panel_lovelace) {
       const ha_menu_button = ha_panel_lovelace.shadowRoot
@@ -453,7 +456,7 @@ class BrowserControlCard extends HTMLElement {
             {
               name: "layout",
               selector: {
-                select: { options: ["center", "space-around", "left", "right"], multiple: false, mode: "dropdown"},
+                select: { options: ["center", "space-around", "left", "right"], multiple: false, mode: "dropdown" },
               },
             },
           ],
