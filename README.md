@@ -43,6 +43,7 @@ Search the result for a string like `Chrome/92.0`
 
 * **No Padding**: remove space between buttons and card border
 * **Small buttons** (button size is based on theme font size)
+* **No background**: remove card background and borders (transparent card)
 
 ## Card configuration
 
@@ -64,6 +65,7 @@ controls:
 no_padding: false
 small_buttons: false
 layout: center
+no_background: false
 ```
 
 > [!NOTE]

@@ -177,6 +177,11 @@ class BrowserControlCard extends HTMLElement {
         this.content.style.padding = "1rem";
       }
 
+      if (this.config.no_background) {
+        this.content.style.background = "none";
+        this.content.style.border = "none";
+      }
+
       this.content.style.display = "flex";
       this.content.style.alignItems = "center";
       if (!this.config.layout) {
@@ -406,6 +411,7 @@ class BrowserControlCard extends HTMLElement {
       ],
       no_padding: false,
       small_buttons: false,
+      no_background: false,
       layout: "center",
     };
   }
@@ -450,10 +456,11 @@ class BrowserControlCard extends HTMLElement {
           schema: [
             { name: "no_padding", selector: { boolean: {} } },
             { name: "small_buttons", selector: { boolean: {} } },
+            { name: "no_background", selector: { boolean: {} } },
             {
               name: "layout",
               selector: {
-                select: { options: ["center", "space-around", "left", "right"], multiple: false, mode: "dropdown"},
+                select: { options: ["center", "space-around", "left", "right"], multiple: false, mode: "dropdown" },
               },
             },
           ],
@@ -475,7 +482,9 @@ class BrowserControlCard extends HTMLElement {
           case "controls":
             return "Select the controls to display. Some controls may be hidden if your current browser does not support the feature.";
           case "layout":
-            return "Configure controls alignment and spacing inside the card"
+            return "Configure controls alignment and spacing inside the card";
+          case "no_background":
+            return "Remove card background and borders (transparent card)";
         }
         return undefined;
       },
