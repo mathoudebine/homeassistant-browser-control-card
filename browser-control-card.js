@@ -1,3 +1,12 @@
+/**
+ * Browser Control Card for Home Assistant
+ * Provides buttons to control browser features such as full-screen mode, wake lock, zoom, and more.
+ * LICENSE: MIT
+ * https://github.com/mathoudebine/homeassistant-browser-control-card
+ */
+
+const CARD_VERSION = 'v0.0.0'; // Will be replaced by actual version during build
+
 /* Wake Lock part from https://web.dev/wake-lock/ (sources: https://glitch.com/edit/#!/wake-lock-demo?path=script.js%3A1%3A0 ) */
 /* Fullscreen part & card design from https://github.com/KTibow/fullscreen-card */
 var wake_lock_supported;
@@ -142,12 +151,10 @@ const minimize_icon = '<ha-icon icon="mdi:eye-off"></ha-icon>';
 const restore_icon = '<ha-icon icon="mdi:eye"></ha-icon>';
 const hide_card_icon = '<ha-icon icon="mdi:close"></ha-icon>';
 
-const button_style =
+const button_common_style =
   "border: none;" +
   "padding: 0.5rem;" +
   "display: inline-block;" +
-  "background: var(--primary-color);" +
-  "color: var(--text-primary-color);" +
   "text-align: center;" +
   "border-radius: var(--ha-card-border-radius, 4px);" +
   "cursor: pointer;" +
@@ -164,6 +171,24 @@ function getIconStyle(small_icon) {
     return big_icon_style;
   }
 }
+
+function getButtonStyle(button_color, icon_color) {
+  let button_style = button_common_style;
+  if (button_color != null && button_color !== "") {
+    button_style += "background: " + button_color + ";";
+  }
+  else {
+    button_style += "background: var(--primary-color);";
+  }
+  if (icon_color != null && icon_color !== "") {
+    button_style += "color: " + icon_color + ";";
+  }
+  else {
+    button_style += "color: var(--text-primary-color);";
+  }
+  return button_style;
+}
+
 class BrowserControlCard extends HTMLElement {
   set hass(hass) {
     this._hass = hass;
@@ -222,7 +247,7 @@ class BrowserControlCard extends HTMLElement {
         this.fullscreen = false;
         this.fullscreenbtn = document.createElement("button");
         this.fullscreenbtn.innerHTML = fullscreen_icon;
-        this.fullscreenbtn.style.cssText = button_style;
+        this.fullscreenbtn.style.cssText = getButtonStyle(this.config.button_color, this.config.icon_color);
         this.fullscreenbtn.title = "Enter fullscreen";
         this.fullscreenbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
@@ -254,7 +279,7 @@ class BrowserControlCard extends HTMLElement {
         this.wake_lock = false;
         this.nowakebtn = document.createElement("button");
         this.nowakebtn.innerHTML = wake_lock_icon;
-        this.nowakebtn.style.cssText = button_style;
+        this.nowakebtn.style.cssText = getButtonStyle(this.config.button_color, this.config.icon_color);
         this.nowakebtn.style.background = "var(--disabled-color)";
         this.nowakebtn.title = "Keep screen awake";
         this.nowakebtn.getElementsByTagName("ha-icon")[0].style.cssText =
@@ -298,7 +323,7 @@ class BrowserControlCard extends HTMLElement {
 
         this.zoominbtn = document.createElement("button");
         this.zoominbtn.innerHTML = zoom_in_icon;
-        this.zoominbtn.style.cssText = button_style;
+        this.zoominbtn.style.cssText = getButtonStyle(this.config.button_color, this.config.icon_color);
         this.zoominbtn.title = "Zoom in";
         this.zoominbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
@@ -310,7 +335,7 @@ class BrowserControlCard extends HTMLElement {
 
         this.zoomoutbtn = document.createElement("button");
         this.zoomoutbtn.innerHTML = zoom_out_icon;
-        this.zoomoutbtn.style.cssText = button_style;
+        this.zoomoutbtn.style.cssText = getButtonStyle(this.config.button_color, this.config.icon_color);
         this.zoomoutbtn.title = "Zoom out";
         this.zoomoutbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
@@ -331,7 +356,7 @@ class BrowserControlCard extends HTMLElement {
       if (this.config.controls.includes('reload')) {
         this.refreshbtn = document.createElement("button");
         this.refreshbtn.innerHTML = refresh_icon;
-        this.refreshbtn.style.cssText = button_style;
+        this.refreshbtn.style.cssText = getButtonStyle(this.config.button_color, this.config.icon_color);
         this.refreshbtn.title = "Refresh page";
         this.refreshbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
@@ -348,7 +373,7 @@ class BrowserControlCard extends HTMLElement {
         this.hidden_navbar = false;
         this.navbarbtn = document.createElement("button");
         this.navbarbtn.innerHTML = hide_navbar_icon;
-        this.navbarbtn.style.cssText = button_style;
+        this.navbarbtn.style.cssText = getButtonStyle(this.config.button_color, this.config.icon_color);
         this.navbarbtn.style.background = "var(--disabled-color)";
         this.navbarbtn.title = "Hide navigation bar";
         this.navbarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
@@ -375,7 +400,7 @@ class BrowserControlCard extends HTMLElement {
         this.hidden_sidebar = false;
         this.sidebarbtn = document.createElement("button");
         this.sidebarbtn.innerHTML = hide_sidebar_icon;
-        this.sidebarbtn.style.cssText = button_style;
+        this.sidebarbtn.style.cssText = getButtonStyle(this.config.button_color, this.config.icon_color);
         this.sidebarbtn.style.background = "var(--disabled-color)";
         this.sidebarbtn.title = "Hide sidebar";
         this.sidebarbtn.getElementsByTagName("ha-icon")[0].style.cssText =
@@ -402,14 +427,14 @@ class BrowserControlCard extends HTMLElement {
         this.card_hidden = false;
         this.minimizebtn = document.createElement("button");
         this.minimizebtn.innerHTML = minimize_icon;
-        this.minimizebtn.style.cssText = button_style;
+        this.minimizebtn.style.cssText = getButtonStyle(this.config.button_color, this.config.icon_color);
         this.minimizebtn.title = "Minimize card";
         this.minimizebtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
         this.minimizebtn.onclick = function () {
           if (this.card_hidden) {
             // Show: restore the card content, show button with eye-off icon
-            this.content.childNodes.forEach(function(child) {
+            this.content.childNodes.forEach(function (child) {
               if (child !== this.minimizebtn) {
                 child.style.display = "";
               }
@@ -420,7 +445,7 @@ class BrowserControlCard extends HTMLElement {
             this.minimizebtn.title = "Minimize card";
           } else {
             // Hide: make all other buttons invisible, keep only this button
-            this.content.childNodes.forEach(function(child) {
+            this.content.childNodes.forEach(function (child) {
               if (child !== this.minimizebtn) {
                 child.style.display = "none";
               }
@@ -441,7 +466,7 @@ class BrowserControlCard extends HTMLElement {
       if (this.config.controls.includes('hide')) {
         this.hidecardbtn = document.createElement("button");
         this.hidecardbtn.innerHTML = hide_card_icon;
-        this.hidecardbtn.style.cssText = button_style;
+        this.hidecardbtn.style.cssText = getButtonStyle(this.config.button_color, this.config.icon_color);
         this.hidecardbtn.title = "Hide card (reload page to restore)";
         this.hidecardbtn.getElementsByTagName("ha-icon")[0].style.cssText =
           getIconStyle(this.config.small_buttons);
@@ -517,14 +542,23 @@ class BrowserControlCard extends HTMLElement {
           title: "Style",
           flatten: true,
           schema: [
-            { name: "no_padding", selector: { boolean: {} } },
-            { name: "small_buttons", selector: { boolean: {} } },
-            { name: "no_background", selector: { boolean: {} } },
             {
-              name: "layout",
-              selector: {
-                select: { options: ["center", "space-around", "left", "right"], multiple: false, mode: "dropdown" },
-              },
+              type: "grid",
+              name: "",
+              schema: [
+                { name: "no_padding", selector: { boolean: {} } },
+                { name: "no_background", selector: { boolean: {} } },
+                { name: "small_buttons", selector: { boolean: {} } },
+                {
+                  name: "layout",
+                  selector: {
+                    select: { options: ["center", "space-around", "left", "right"], multiple: false, mode: "dropdown" },
+                  },
+                },
+
+                { name: "button_color", selector: { text: {} } },
+                { name: "icon_color", selector: { text: {} } },
+              ],
             },
           ],
         },
@@ -534,7 +568,7 @@ class BrowserControlCard extends HTMLElement {
           case "controls":
             return "Available controls";
           case "layout":
-            return "Horizontal layout"
+            return "Horizontal layout";
         }
         return undefined;
       },
@@ -548,6 +582,10 @@ class BrowserControlCard extends HTMLElement {
             return "Configure controls alignment and spacing inside the card";
           case "no_background":
             return "Remove card background and borders (transparent card)";
+          case "button_color":
+            return "CSS color for buttons. Leave empty to use theme primary-color.";
+          case "icon_color":
+            return "CSS color for icons. Leave empty to use theme text-primary-color.";
         }
         return undefined;
       },
@@ -565,3 +603,9 @@ window.customCards.push({
   description:
     "Card to control browser settings: full-screen, wake lock, zoom...",
 });
+
+console.info(
+  `%c BROWSER-CONTROL-CARD %c ${CARD_VERSION} `,
+  'color: white; background: #009ac7; font-weight: bold;',
+  'color: #009ac7; background: white; font-weight: bold;'
+);
