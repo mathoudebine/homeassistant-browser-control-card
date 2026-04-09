@@ -46,6 +46,7 @@ Search the result for a string like `Chrome/92.0`
 * **No Padding**: remove space between buttons and card border
 * **Small buttons** (button size is based on theme font size)
 * **No background**: remove card background and borders (transparent card)
+* **Buttons/icons color**: set custom color for buttons and icons. [CSS color values](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value) are supported: `#FF00FF`, `rgb(255,128,128)`, `hsl(200,100%,50%)`, `var(--accent-color)`, `orange`... Leave empty to use theme colors.
 
 ## Card configuration
 
@@ -70,6 +71,8 @@ no_padding: false
 small_buttons: false
 layout: center
 no_background: false
+button_color: red
+icon_color: rgb(100,100,100)
 ```
 
 > [!NOTE]
