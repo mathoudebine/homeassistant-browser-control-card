@@ -13,7 +13,12 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - run: npm install uglify-js
-    - run: npx uglify-js browser-control-card.js --compress --output browser-control-card.js
+    - name: Set version in JavaScript file
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        sed -i "s/CARD_VERSION = 'v0.0.0'/CARD_VERSION = '$VERSION'/" browser-control-card.js
+    - name: Minify JavaScript
+      run: npx uglify-js browser-control-card.js --compress --output browser-control-card.js
     - name: Upload release asset
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

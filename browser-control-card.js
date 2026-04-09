@@ -1,3 +1,12 @@
+/**
+ * Browser Control Card for Home Assistant
+ * Provides buttons to control browser features such as full-screen mode, wake lock, zoom, and more.
+ * LICENSE: MIT
+ * https://github.com/mathoudebine/homeassistant-browser-control-card
+ */
+
+const CARD_VERSION = 'v0.0.0'; // Will be replaced by actual version during build
+
 /* Wake Lock part from https://web.dev/wake-lock/ (sources: https://glitch.com/edit/#!/wake-lock-demo?path=script.js%3A1%3A0 ) */
 /* Fullscreen part & card design from https://github.com/KTibow/fullscreen-card */
 var wake_lock_supported;
@@ -594,3 +603,9 @@ window.customCards.push({
   description:
     "Card to control browser settings: full-screen, wake lock, zoom...",
 });
+
+console.info(
+  `%c BROWSER-CONTROL-CARD %c ${CARD_VERSION} `,
+  'color: white; background: #009ac7; font-weight: bold;',
+  'color: #009ac7; background: white; font-weight: bold;'
+);

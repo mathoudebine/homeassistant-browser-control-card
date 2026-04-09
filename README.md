@@ -71,8 +71,8 @@ no_padding: false
 small_buttons: false
 layout: center
 no_background: false
-button_color: red
-icon_color: rgb(100,100,100)
+button_color: red # Leave empty or remove to use theme primary color
+icon_color: rgb(100,100,100) # Leave empty or remove to use theme text primary color
 ```
 
 > [!NOTE]
