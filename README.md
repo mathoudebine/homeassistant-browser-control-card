@@ -19,14 +19,16 @@ Changes are not persisted: reload the page to revert to initial settings
 > [!NOTE]
 > Some controls may be hidden if your browser does not support them
 
-| Icon                                                                   | Control                                                   | Config. option           | Availability                                                                                                                                                                                                    |
-|------------------------------------------------------------------------|-----------------------------------------------------------|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ![Full-screen](/resources/fullscreen.png)                               | Enter / exit full-screen                                  | `controls: [fullscreen]` | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_element_requestfullscreen)       |
-| ![Wake lock](/resources/wake_mode.png)                                  | Enable / disable screen wake lock (keep screen always on) | `controls: [wakelock]`   | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/wake-lock)                               |
-| ![Zoom In](/resources/zoom_in.png) ![Zoom out](/resources/zoom_out.png) | Zoom in / zoom out (using CSS)                            | `controls: [zoom]`       | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/css-zoom)                                |
-| ![Reload](/resources/reload.png)                                        | Reload page                                               | `controls: [reload]`     | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_location_reload)                 |
-| ![Hide navigation bar](/resources/hide_navbar.png)                      | Hide navigation bar                                       | `controls: [navbar]`     | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_cssstyledeclaration_setproperty) |
-| ![Hide sidebar](/resources/hide_sidebar.png)                            | Hide sidebar                                              | `controls: [sidebar]`    | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_cssstyledeclaration_setproperty) |
+| Icon                                                                    | Control                                                                                                                                                      | Config. option           | Availability                                                                                                                                                                                                    |
+|-------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ![Full-screen](/resources/fullscreen.png)                               | Enter / exit full-screen                                                                                                                                     | `controls: [fullscreen]` | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_element_requestfullscreen)       |
+| ![Wake lock](/resources/wake_mode.png)                                  | Enable / disable screen wake lock (keep screen always on)                                                                                                    | `controls: [wakelock]`   | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/wake-lock)                               |
+| ![Zoom In](/resources/zoom_in.png) ![Zoom out](/resources/zoom_out.png) | Zoom in / zoom out (using CSS)                                                                                                                               | `controls: [zoom]`       | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/css-zoom)                                |
+| ![Reload](/resources/reload.png)                                        | Reload page                                                                                                                                                  | `controls: [reload]`     | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_location_reload)                 |
+| ![Hide navigation bar](/resources/hide_navbar.png)                      | Hide navigation bar                                                                                                                                          | `controls: [navbar]`     | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_cssstyledeclaration_setproperty) |
+| ![Hide sidebar](/resources/hide_sidebar.png)                            | Hide sidebar                                                                                                                                                 | `controls: [sidebar]`    | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_cssstyledeclaration_setproperty) |
+| ![Minimize card](/resources/minimize.png)                               | Show / hide controls                                                                                                                                         | `controls: [minimize]`   | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_cssstyledeclaration_setproperty) |
+| ![Hide card](/resources/hide.png)                                       | Completely hide card from dashboard. Useful when all settings have been made and card is not useful anymore. **Card will come back after page is reloaded.** | `controls: [hide]`       | [![check_browser_support](https://img.shields.io/badge/check-browser%20support-%2339b54a.svg?style=flat-square&logo=googlechrome&logoColor=white)](https://caniuse.com/mdn-api_cssstyledeclaration_setproperty) |
 
 ### What is my browser?
 
@@ -38,8 +40,8 @@ Search the result for a string like `Chrome/92.0`
 * **Layout**: buttons horizontal alignment and spacing. Select between `center` (default), `space-around`, `left` and `right`
 
 | ![Centered layout](/resources/layout-center.png) | ![Centered layout](/resources/layout-space-around.png) |
-|-------------------------------------------------|-------------------------------------------------------|
-| `center` layout                                 | `space-around` layout                                 |
+|--------------------------------------------------|--------------------------------------------------------|
+| `center` layout                                  | `space-around` layout                                  |
 
 * **No Padding**: remove space between buttons and card border
 * **Small buttons** (button size is based on theme font size)
@@ -62,6 +64,8 @@ controls:
   - reload
   - navbar
   - sidebar
+  - minimize
+  - hide
 no_padding: false
 small_buttons: false
 layout: center

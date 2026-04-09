@@ -138,6 +138,9 @@ const zoom_out_icon = '<ha-icon icon="mdi:magnify-minus"></ha-icon>';
 const refresh_icon = '<ha-icon icon="mdi:refresh"></ha-icon>';
 const hide_navbar_icon = '<ha-icon icon="mdi:table-row-remove"></ha-icon>';
 const hide_sidebar_icon = '<ha-icon icon="mdi:playlist-remove"></ha-icon>';
+const minimize_icon = '<ha-icon icon="mdi:eye-off"></ha-icon>';
+const restore_icon = '<ha-icon icon="mdi:eye"></ha-icon>';
+const hide_card_icon = '<ha-icon icon="mdi:close"></ha-icon>';
 
 const button_style =
   "border: none;" +
@@ -392,6 +395,62 @@ class BrowserControlCard extends HTMLElement {
         this.content.appendChild(this.sidebarbtn);
       }
 
+      /********************************************************
+                  Minimize card (show/hide controls)
+      ********************************************************/
+      if (this.config.controls.includes('minimize')) {
+        this.card_hidden = false;
+        this.minimizebtn = document.createElement("button");
+        this.minimizebtn.innerHTML = minimize_icon;
+        this.minimizebtn.style.cssText = button_style;
+        this.minimizebtn.title = "Minimize card";
+        this.minimizebtn.getElementsByTagName("ha-icon")[0].style.cssText =
+          getIconStyle(this.config.small_buttons);
+        this.minimizebtn.onclick = function () {
+          if (this.card_hidden) {
+            // Show: restore the card content, show button with eye-off icon
+            this.content.childNodes.forEach(function(child) {
+              if (child !== this.minimizebtn) {
+                child.style.display = "";
+              }
+            }.bind(this));
+            this.minimizebtn.innerHTML = minimize_icon;
+            this.minimizebtn.getElementsByTagName("ha-icon")[0].style.cssText =
+              getIconStyle(this.config.small_buttons);
+            this.minimizebtn.title = "Minimize card";
+          } else {
+            // Hide: make all other buttons invisible, keep only this button
+            this.content.childNodes.forEach(function(child) {
+              if (child !== this.minimizebtn) {
+                child.style.display = "none";
+              }
+            }.bind(this));
+            this.minimizebtn.innerHTML = restore_icon;
+            this.minimizebtn.getElementsByTagName("ha-icon")[0].style.cssText =
+              getIconStyle(this.config.small_buttons);
+            this.minimizebtn.title = "Show controls";
+          }
+          this.card_hidden = !this.card_hidden;
+        }.bind(this);
+        this.content.appendChild(this.minimizebtn);
+      }
+
+      /********************************************************
+              Hide card (will come back on page reload)
+      ********************************************************/
+      if (this.config.controls.includes('hide')) {
+        this.hidecardbtn = document.createElement("button");
+        this.hidecardbtn.innerHTML = hide_card_icon;
+        this.hidecardbtn.style.cssText = button_style;
+        this.hidecardbtn.title = "Hide card (reload page to restore)";
+        this.hidecardbtn.getElementsByTagName("ha-icon")[0].style.cssText =
+          getIconStyle(this.config.small_buttons);
+        this.hidecardbtn.onclick = function () {
+          this.style.display = "none";
+        }.bind(this);
+        this.content.appendChild(this.hidecardbtn);
+      }
+
       while (this.firstChild) {
         this.removeChild(this.firstChild);
       }
@@ -408,9 +467,11 @@ class BrowserControlCard extends HTMLElement {
         "reload",
         "navbar",
         "sidebar",
+        "minimize",
+        "hide"
       ],
       no_padding: false,
-      small_buttons: false,
+      small_buttons: true,
       no_background: false,
       layout: "center",
     };
@@ -441,6 +502,8 @@ class BrowserControlCard extends HTMLElement {
                     { label: "Reload page", value: "reload" },
                     { label: "Toggle navigation bar", value: "navbar" },
                     { label: "Toggle sidebar", value: "sidebar" },
+                    { label: "Minimize card (hide controls)", value: "minimize" },
+                    { label: "Hide card (reload page to restore)", value: "hide" },
                   ],
                   multiple: true,
                 },
